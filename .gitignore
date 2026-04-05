@@ -1,6 +1,5 @@
 # Exclude Compiled folders
 out/
-bin/
 
 # Exclude IDE settings (IntelliJ)
 .idea/

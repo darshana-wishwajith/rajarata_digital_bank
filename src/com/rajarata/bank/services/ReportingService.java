@@ -58,6 +58,7 @@ public class ReportingService {
             sb.append(String.format("║ Account Number : %-43s ║\n", accountNumber));
             sb.append(String.format("║ Account Holder : %-43s ║\n", customerName));
             sb.append(String.format("║ Account Type   : %-43s ║\n", account.getAccountType()));
+            sb.append(String.format("║ Currency       : %-43s ║\n", account.getCurrency()));
             sb.append(String.format("║ Interest Rate  : %-43s ║\n",
                     String.format("%.2f%% per annum", account.getInterestRate() * 100)));
             sb.append(String.format("║ Statement Date : %-43s ║\n", DateUtil.getCurrentDate()));
@@ -85,7 +86,7 @@ public class ReportingService {
             // Estimate opening balance (reverse-engineer from closing balance)
             openingBalance = account.getBalance() - totalDeposits - periodInterestEarned + totalWithdrawals;
 
-            sb.append(String.format("║ Opening Balance: $%-42s ║\n", ValidationUtil.formatAmount(openingBalance)));
+            sb.append(String.format("║ Opening Balance: %s %-40s ║\n", account.getCurrency(), ValidationUtil.formatAmount(openingBalance)));
             sb.append("╠══════════════════════════════════════════════════════════════╣\n");
             sb.append("║  Date       │ Type         │     Amount │ Balance    │ Desc ║\n");
             sb.append("║─────────────┼──────────────┼────────────┼────────────┼──────║\n");
@@ -112,13 +113,13 @@ public class ReportingService {
             }
 
             sb.append("╠══════════════════════════════════════════════════════════════╣\n");
-            sb.append(String.format("║ Closing Balance   : $%-40s ║\n", ValidationUtil.formatAmount(account.getBalance())));
+            sb.append(String.format("║ Closing Balance   : %s %-38s ║\n", account.getCurrency(), ValidationUtil.formatAmount(account.getBalance())));
             sb.append("╠══════════════════════════════════════════════════════════════╣\n");
             sb.append("║                    TRANSACTION SUMMARY                      ║\n");
             sb.append("╠══════════════════════════════════════════════════════════════╣\n");
-            sb.append(String.format("║ Total Deposits    : $%-40s ║\n", ValidationUtil.formatAmount(totalDeposits)));
+            sb.append(String.format("║ Total Deposits    : %s %-38s ║\n", account.getCurrency(), ValidationUtil.formatAmount(totalDeposits)));
             sb.append(String.format("║   # of Deposits   : %-41d ║\n", depositCount));
-            sb.append(String.format("║ Total Withdrawals : $%-40s ║\n", ValidationUtil.formatAmount(totalWithdrawals)));
+            sb.append(String.format("║ Total Withdrawals : %s %-38s ║\n", account.getCurrency(), ValidationUtil.formatAmount(totalWithdrawals)));
             sb.append(String.format("║   # of Withdrawals: %-41d ║\n", withdrawalCount));
             sb.append(String.format("║ Total Transactions: %-41d ║\n", txns.size()));
             sb.append("╠══════════════════════════════════════════════════════════════╣\n");
@@ -126,11 +127,11 @@ public class ReportingService {
             sb.append("╠══════════════════════════════════════════════════════════════╣\n");
             sb.append(String.format("║ Interest Rate     : %-41s ║\n",
                     String.format("%.2f%% per annum", account.getInterestRate() * 100)));
-            sb.append(String.format("║ Interest This Period : $%-38s ║\n",
-                    ValidationUtil.formatAmount(periodInterestEarned)));
+            sb.append(String.format("║ Interest This Period : %s %-36s ║\n",
+                    account.getCurrency(), ValidationUtil.formatAmount(periodInterestEarned)));
             sb.append(String.format("║   # of Credits    : %-41d ║\n", interestCount));
-            sb.append(String.format("║ Total Interest (Lifetime): $%-33s ║\n",
-                    ValidationUtil.formatAmount(account.getTotalInterestEarned())));
+            sb.append(String.format("║ Total Interest (Lifetime): %s %-31s ║\n",
+                    account.getCurrency(), ValidationUtil.formatAmount(account.getTotalInterestEarned())));
             sb.append("╠══════════════════════════════════════════════════════════════╣\n");
             sb.append("║     This is a computer-generated statement.                 ║\n");
             sb.append("║     For queries, contact: support@rajarata.com              ║\n");
@@ -155,12 +156,15 @@ public class ReportingService {
         sb.append(String.format("║ Total Accounts  : %-22d ║\n", accountService.getAccountCount()));
         sb.append(String.format("║ Total Loans     : %-22d ║\n", loanService.getAllLoans().size()));
 
-        // Calculate total balances
-        double totalBalance = 0;
+        // Calculate total balances per currency
+        java.util.Map<String, Double> currencyTotals = new java.util.TreeMap<>();
         for (Account acc : accountService.getAllAccounts().values()) {
-            totalBalance += acc.getBalance();
+            currencyTotals.merge(acc.getCurrency(), acc.getBalance(), Double::sum);
         }
-        sb.append(String.format("║ Total Deposits  : $%-21s ║\n", ValidationUtil.formatAmount(totalBalance)));
+        for (java.util.Map.Entry<String, Double> entry : currencyTotals.entrySet()) {
+            sb.append(String.format("║ Total %-3s       : %-22s ║\n",
+                    entry.getKey(), ValidationUtil.formatAmount(entry.getValue())));
+        }
 
         // Active loans
         long activeLoans = loanService.getAllLoans().values().stream()
@@ -202,8 +206,9 @@ public class ReportingService {
         sb.append(String.format("║ Rejected        : %-22d ║\n", rejected));
         sb.append(String.format("║ Pending         : %-22d ║\n", pending));
         sb.append("╠══════════════════════════════════════════╣\n");
-        sb.append(String.format("║ Total Disbursed : $%-21s ║\n", ValidationUtil.formatAmount(totalDisbursed)));
-        sb.append(String.format("║ Outstanding     : $%-21s ║\n", ValidationUtil.formatAmount(totalOutstanding)));
+        String sym = CurrencyUtil.getCurrencySymbol(null);
+        sb.append(String.format("║ Total Disbursed : %s%-20s ║\n", sym, ValidationUtil.formatAmount(totalDisbursed)));
+        sb.append(String.format("║ Outstanding     : %s%-20s ║\n", sym, ValidationUtil.formatAmount(totalOutstanding)));
         if (total > 0) {
             sb.append(String.format("║ Default Rate    : %.1f%%                         ║\n",
                     (defaulted * 100.0) / total));

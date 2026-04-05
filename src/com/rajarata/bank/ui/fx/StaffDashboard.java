@@ -5,7 +5,7 @@ import com.rajarata.bank.models.user.*;
 import com.rajarata.bank.models.loan.*;
 import com.rajarata.bank.models.transaction.*;
 import com.rajarata.bank.exceptions.*;
-import com.rajarata.bank.utils.ValidationUtil;
+import com.rajarata.bank.utils.*;
 import javafx.collections.FXCollections;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -166,7 +166,8 @@ public class StaffDashboard {
             id.setStyle("-fx-font-weight: bold;");
             Label cust = new Label("Customer: " + loan.getCustomerId());
             Label type = new Label(loan.getLoanType().getDisplayName());
-            Label amt = new Label("$" + ValidationUtil.formatAmount(loan.getLoanAmount()));
+            String loanSym = CurrencyUtil.getCurrencySymbol(null);
+            Label amt = new Label(loanSym + " " + ValidationUtil.formatAmount(loan.getLoanAmount()));
             amt.setStyle("-fx-font-weight: bold; -fx-text-fill: #4A90D9;");
             row.getChildren().addAll(id, cust, type, amt);
 

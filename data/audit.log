@@ -101,3 +101,99 @@
 [2026-04-05 11:37:43] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
 [2026-04-05 11:38:36] | LOGOUT | User logged out: ADMIN-11
 [2026-04-05 11:38:50] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 18:43:46] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 18:44:15] | LOGIN_FAILED | Invalid password for: admin@rajarata.com (Attempts remaining: 2)
+[2026-04-05 18:44:23] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
+[2026-04-05 18:46:08] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 18:46:22] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 18:46:39] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
+[2026-04-05 18:46:56] | RATE_UPDATE | Exchange rate updated: LKR = 1.0
+[2026-04-05 18:47:10] | RATE_UPDATE | Exchange rate updated: LKR = 300.0
+[2026-04-05 18:48:14] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 18:48:24] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 18:48:53] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
+[2026-04-05 18:49:00] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 21:59:13] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 21:59:56] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 22:01:10] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 22:01:52] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 22:02:10] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
+[2026-04-05 22:03:27] | WITHDRAWAL | Withdrawal $100.00 from RDB1001-0002
+[2026-04-05 22:03:56] | WITHDRAWAL | Withdrawal $250.00 from RDB1001-0002
+[2026-04-05 22:04:11] | DEPOSIT | Deposit $2,000.00 to RDB1001-0002
+[2026-04-05 22:05:41] | DEPOSIT | Deposit $100.00 to RDB1001-0002
+[2026-04-05 22:05:48] | WITHDRAWAL | Withdrawal $100.00 from RDB1001-0002
+[2026-04-05 22:07:24] | BILL_PAYMENT | Bill payment $100.00 to National Power Company from RDB1001-0002
+[2026-04-05 22:08:16] | BILL_PAYMENT | Bill payment $100.00 to Municipal Water Board from RDB1001-0002
+[2026-04-05 22:11:19] | LOGOUT | User logged out: CUST-1001
+[2026-04-05 22:11:44] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
+[2026-04-05 22:12:25] | ACCOUNT_OPENED | Account RDB1001-0016 (Fixed Deposit) opened for CUST-1001 with initial deposit $10,000.00
+[2026-04-05 22:12:54] | WITHDRAWAL | Withdrawal $100.00 from RDB1001-0016
+[2026-04-05 22:13:58] | LOGOUT | User logged out: CUST-1001
+[2026-04-05 22:14:40] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
+[2026-04-05 22:15:16] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 22:15:24] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 22:15:57] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 22:16:25] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 22:16:36] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
+[2026-04-05 22:18:48] | LOGOUT | User logged out: CUST-1001
+[2026-04-05 22:23:40] | REGISTRATION | New customer registered: CUST-1002 (testuser@gmail.com)
+[2026-04-05 22:26:36] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
+[2026-04-05 22:29:01] | ACCOUNT_OPENED | Account RDB1002-0017 (Savings) opened for CUST-1002 with initial deposit $1,000.00
+[2026-04-05 22:30:29] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 22:30:51] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 22:31:13] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
+[2026-04-05 22:31:24] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
+[2026-04-05 22:32:05] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 22:32:25] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 22:32:51] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
+[2026-04-05 22:33:57] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 22:34:09] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 22:34:32] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
+[2026-04-05 22:34:41] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 1)
+[2026-04-05 22:34:43] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 0)
+[2026-04-05 22:34:43] | SECURITY_LOCKOUT | Account locked after 3 failed attempts: testuser@gmail.com
+[2026-04-05 22:34:43] | FRAUD_DETECTED | Case FRAUD-000001: Account locked after 3 consecutive failed login attempts from email: testuser@gmail.com | Customer: CUST-1002 | Pattern: REPEATED_LOGIN_FAILURE
+[2026-04-05 22:34:45] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:34:45] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:34:45] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:36:10] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:36:11] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:36:12] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:36:12] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:36:12] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-05 22:38:02] | PASSWORD_RECOVERY | Password recovered for: CUST-1002
+[2026-04-05 22:38:31] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
+[2026-04-05 22:39:44] | LOAN_APPLICATION | Loan application LOAN-000001 submitted by CUST-1002 - Personal Loan $10,000.00
+[2026-04-05 22:40:43] | ACCOUNT_OPENED | Account RDB1002-0018 (Savings) opened for CUST-1002 with initial deposit $2,000.00
+[2026-04-05 22:41:57] | TRANSFER | Transfer $500.00 USD from RDB1002-0018 to RDB1002-0017
+[2026-04-05 22:43:30] | LOGOUT | User logged out: CUST-1002
+[2026-04-05 22:43:46] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
+[2026-04-05 22:45:29] | FRAUD_CASE_UPDATE | Case FRAUD-000001 updated to: Resolved
+[2026-04-05 22:46:29] | LOGOUT | User logged out: ADMIN-11
+[2026-04-05 22:47:24] | LOGIN_SUCCESS | User logged in: ADMIN-12 (superadmin@rajarata.com) Role: Administrator
+[2026-04-05 22:48:28] | RATE_UPDATE | Exchange rate updated: LKR = 302.0
+[2026-04-05 22:50:31] | STAFF_CREATION | New staff created: STAFF-102 by ADMIN-12
+[2026-04-05 22:50:39] | LOGOUT | User logged out: ADMIN-12
+[2026-04-05 22:51:01] | LOGIN_SUCCESS | User logged in: STAFF-102 (ts@gmail.com) Role: Staff
+[2026-04-05 22:52:02] | LOAN_APPROVED | Loan LOAN-000001 approved by STAFF-102 - $10,000.00
+[2026-04-05 22:52:21] | LOGOUT | User logged out: STAFF-102
+[2026-04-05 22:52:34] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
+[2026-04-05 22:52:51] | LOGOUT | User logged out: CUST-1001
+[2026-04-05 22:53:07] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
+[2026-04-05 23:10:25] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 23:10:40] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 23:11:08] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
+[2026-04-05 23:12:34] | ACCOUNT_OPENED | Account RDB1002-0019 (Savings) opened for CUST-1002 with initial deposit $500.00
+[2026-04-05 23:12:58] | DEPOSIT | Deposit $500.00 to RDB1002-0019
+[2026-04-05 23:31:24] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-05 23:41:29] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 23:41:56] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
+[2026-04-05 23:47:55] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-05 23:48:04] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown

@@ -2,11 +2,12 @@ package com.rajarata.bank.models.account;
 
 import com.rajarata.bank.exceptions.InsufficientFundsException;
 import com.rajarata.bank.exceptions.InvalidAccountException;
+import com.rajarata.bank.utils.*;
 
 /**
  * Savings Account implementation with specific rules:
  * - Interest Rate: 3.5% per annum (calculated monthly)
- * - Minimum Balance: $500 (penalty of $25 if violated)
+ * - Minimum Balance: 500 (penalty apply if violated)
  * - Monthly Withdrawal Limit: 5 transactions
  * - No overdraft allowed
  * 
@@ -48,7 +49,7 @@ public class SavingsAccount extends Account {
      * Creates a new Savings Account with an initial deposit.
      * 
      * @param customerId The owning customer's ID
-     * @param initialDeposit The initial deposit amount (must be >= $500)
+     * @param initialDeposit The initial deposit amount (must be >= 500)
      * @param currency The account currency
      * @throws InvalidAccountException if initial deposit is insufficient
      */
@@ -56,8 +57,9 @@ public class SavingsAccount extends Account {
             throws InvalidAccountException {
         super(customerId, initialDeposit, currency);
         if (initialDeposit < MIN_INITIAL_DEPOSIT) {
+            String sym = CurrencyUtil.getCurrencySymbol(currency);
             throw new InvalidAccountException(
-                "Savings account requires minimum initial deposit of $" + MIN_INITIAL_DEPOSIT,
+                "Savings account requires minimum initial deposit of " + sym + " " + MIN_INITIAL_DEPOSIT,
                 getAccountNumber());
         }
     }

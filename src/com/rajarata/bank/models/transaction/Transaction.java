@@ -1,5 +1,6 @@
 package com.rajarata.bank.models.transaction;
 
+import com.rajarata.bank.utils.CurrencyUtil;
 import com.rajarata.bank.utils.DateUtil;
 import com.rajarata.bank.utils.ValidationUtil;
 
@@ -88,7 +89,7 @@ public class Transaction {
      * @param description Description/memo
      */
     public Transaction(TransactionType type, String accountNumber, double amount, String description) {
-        this(type, accountNumber, null, amount, "USD", description);
+        this(type, accountNumber, null, amount, "LKR", description);
     }
 
     /**
@@ -169,9 +170,11 @@ public class Transaction {
      * @return Formatted transaction summary
      */
     public String getTransactionSummary() {
-        return String.format("  %s | %-12s | $%12s | %-10s | %s",
+        String sym = CurrencyUtil.getCurrencySymbol(currency);
+        return String.format("  %s | %-12s | %s%12s | %-10s | %s",
                 timestamp.substring(0, 10),
                 type.getDisplayName(),
+                sym,
                 ValidationUtil.formatAmount(amount),
                 status.getDisplayName(),
                 description != null ? description : "");
@@ -183,23 +186,26 @@ public class Transaction {
      */
     public String getDetailedView() {
         StringBuilder sb = new StringBuilder();
+        String sym = CurrencyUtil.getCurrencySymbol(currency);
         sb.append("\n┌─── Transaction Details ────────────────┐\n");
         sb.append(String.format("│ Transaction ID : %-21s │\n", transactionId));
         sb.append(String.format("│ Date/Time      : %-21s │\n", timestamp));
         sb.append(String.format("│ Type           : %-21s │\n", type.getDisplayName()));
-        sb.append(String.format("│ Amount         : $%-20s │\n", ValidationUtil.formatAmount(amount)));
+        sb.append(String.format("│ Amount         : %s%-19s │\n", sym, ValidationUtil.formatAmount(amount)));
         sb.append(String.format("│ Currency       : %-21s │\n", currency));
         sb.append(String.format("│ Status         : %-21s │\n", status.getDisplayName()));
         sb.append(String.format("│ Source Account : %-21s │\n", sourceAccount != null ? sourceAccount : "N/A"));
         sb.append(String.format("│ Dest Account   : %-21s │\n", destinationAccount != null ? destinationAccount : "N/A"));
-        sb.append(String.format("│ Balance After  : $%-20s │\n", ValidationUtil.formatAmount(balanceAfter)));
+        sb.append(String.format("│ Balance After  : %s%-19s │\n", sym, ValidationUtil.formatAmount(balanceAfter)));
         if (description != null && !description.isEmpty()) {
             sb.append(String.format("│ Description    : %-21s │\n", description));
         }
         if (sourceCurrency != null && targetCurrency != null) {
-            sb.append(String.format("│ Exchange       : %s → %s           │\n", sourceCurrency, targetCurrency));
-            sb.append(String.format("│ Source Amount  : $%-20s │\n", ValidationUtil.formatAmount(sourceAmount)));
-            sb.append(String.format("│ Target Amount  : $%-20s │\n", ValidationUtil.formatAmount(targetAmount)));
+            String sSym = CurrencyUtil.getCurrencySymbol(sourceCurrency);
+            String tSym = CurrencyUtil.getCurrencySymbol(targetCurrency);
+            sb.append(String.format("│ Exchange       : %s → %-16s │\n", sourceCurrency, targetCurrency));
+            sb.append(String.format("│ Source Amount  : %s%-19s │\n", sSym, ValidationUtil.formatAmount(sourceAmount)));
+            sb.append(String.format("│ Target Amount  : %s%-19s │\n", tSym, ValidationUtil.formatAmount(targetAmount)));
         }
         sb.append("└────────────────────────────────────────┘\n");
         return sb.toString();

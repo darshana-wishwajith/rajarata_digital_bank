@@ -1,0 +1,1 @@
+FRAUD-000001|CUST-1002|N/A|Account locked after 3 consecutive failed login attempts from email: testuser@gmail.com|REPEATED_LOGIN_FAILURE|Resolved|2026-04-05 22:34:43|Unlocked

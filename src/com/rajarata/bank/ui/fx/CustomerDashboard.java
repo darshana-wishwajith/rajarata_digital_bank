@@ -7,7 +7,7 @@ import com.rajarata.bank.models.transaction.*;
 import com.rajarata.bank.models.loan.*;
 import com.rajarata.bank.exceptions.*;
 import com.rajarata.bank.factory.AccountFactory;
-import com.rajarata.bank.utils.ValidationUtil;
+import com.rajarata.bank.utils.*;
 import javafx.collections.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
@@ -154,10 +154,17 @@ public class CustomerDashboard {
         Label sub = new Label("Here's your banking overview");
         sub.getStyleClass().add("page-subtitle");
 
-        // Stat cards row
+        // Stat cards row — per-currency balances
         HBox statsRow = new HBox(20);
+        java.util.Map<String, Double> balances = customer.getBalanceByCurrency();
+        StringBuilder balStr = new StringBuilder();
+        for (java.util.Map.Entry<String, Double> entry : balances.entrySet()) {
+            if (balStr.length() > 0) balStr.append("\n");
+            balStr.append(entry.getKey()).append(" ").append(ValidationUtil.formatAmount(entry.getValue()));
+        }
+        if (balStr.length() == 0) balStr.append("No accounts");
         statsRow.getChildren().addAll(
-            createStatCard("Total Balance", "$" + ValidationUtil.formatAmount(customer.getTotalBalance()), true),
+            createStatCard("Balances", balStr.toString(), true),
             createStatCard("Accounts", String.valueOf(customer.getAccountCount()), false),
             createStatCard("Credit Score", String.valueOf(customer.getCreditScore()), false),
             createStatCard("Unread Alerts",
@@ -237,7 +244,7 @@ public class CustomerDashboard {
         VBox info = new VBox(4);
         Label accNum = new Label(acc.getAccountNumber());
         accNum.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
-        Label type = new Label(acc.getAccountType() + " Account");
+        Label type = new Label(acc.getAccountType() + " Account (" + acc.getCurrency() + ")");
         type.setStyle("-fx-font-size: 12px; -fx-text-fill: #7F8C8D;");
         info.getChildren().addAll(accNum, type);
 
@@ -246,7 +253,8 @@ public class CustomerDashboard {
 
         VBox balanceBox = new VBox(2);
         balanceBox.setAlignment(Pos.CENTER_RIGHT);
-        Label balance = new Label("$" + ValidationUtil.formatAmount(acc.getBalance()));
+        String currSymbol = getCurrencySymbol(acc.getCurrency());
+        Label balance = new Label(currSymbol + ValidationUtil.formatAmount(acc.getBalance()));
         balance.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #4A90D9;");
         Label status = new Label(acc.getStatus());
         status.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: " +
@@ -255,6 +263,18 @@ public class CustomerDashboard {
 
         card.getChildren().addAll(info, spacer, balanceBox);
         return card;
+    }
+
+    /** Returns a currency symbol for display */
+    private String getCurrencySymbol(String currency) {
+        if (currency == null) return "$";
+        switch (currency) {
+            case "USD": return "$";
+            case "EUR": return "€";
+            case "GBP": return "£";
+            case "LKR": return "Rs.";
+            default: return currency + " ";
+        }
     }
 
     // ====================================================================
@@ -276,13 +296,19 @@ public class CustomerDashboard {
         typeBox.setValue("Savings");
         typeBox.setMaxWidth(Double.MAX_VALUE);
 
-        Label minLabel = new Label("Minimum deposit: $" +
+        // Currency selection for multi-currency accounts
+        Label currLabel = new Label("Account Currency");
+        currLabel.getStyleClass().add("field-label");
+        ComboBox<String> currBox = new ComboBox<>();
+        currBox.getItems().addAll("LKR - Sri Lankan Rupee", "USD - US Dollar", "EUR - Euro", "GBP - British Pound");
+        currBox.setValue("LKR - Sri Lankan Rupee");
+        currBox.setMaxWidth(Double.MAX_VALUE);
+
+        Label minLabel = new Label("Minimum deposit: LKR " +
             ValidationUtil.formatAmount(AccountFactory.getMinimumDeposit("Savings")));
         minLabel.setStyle("-fx-text-fill: #7F8C8D; -fx-font-size: 12px;");
-        typeBox.setOnAction(e -> minLabel.setText("Minimum deposit: $" +
-            ValidationUtil.formatAmount(AccountFactory.getMinimumDeposit(typeBox.getValue()))));
 
-        Label depLabel = new Label("Initial Deposit ($)");
+        Label depLabel = new Label("Initial Deposit");
         depLabel.getStyleClass().add("field-label");
         TextField depositField = new TextField();
         depositField.setPromptText("Enter amount");
@@ -302,8 +328,16 @@ public class CustomerDashboard {
             boolean isFD = "Fixed Deposit".equals(typeBox.getValue());
             lockLabel.setVisible(isFD);
             lockBox.setVisible(isFD);
-            minLabel.setText("Minimum deposit: $" +
+            String selectedCurr = currBox.getValue().split(" - ")[0];
+            minLabel.setText("Minimum deposit: " + selectedCurr + " " +
                 ValidationUtil.formatAmount(AccountFactory.getMinimumDeposit(typeBox.getValue())));
+        });
+
+        currBox.setOnAction(e -> {
+            String selectedCurr = currBox.getValue().split(" - ")[0];
+            minLabel.setText("Minimum deposit: " + selectedCurr + " " +
+                ValidationUtil.formatAmount(AccountFactory.getMinimumDeposit(typeBox.getValue())));
+            depLabel.setText("Initial Deposit (" + selectedCurr + ")");
         });
 
         Label resultLabel = new Label();
@@ -318,9 +352,11 @@ public class CustomerDashboard {
             try {
                 double deposit = Double.parseDouble(depositField.getText());
                 int lockIn = lockBox.isVisible() ? lockBox.getValue() : 0;
+                String currency = currBox.getValue().split(" - ")[0];
                 Account account = bank.getAccountService().openAccount(
-                    customer.getUserId(), typeBox.getValue(), deposit, "USD", lockIn);
-                resultLabel.setText("✓ Account created! Number: " + account.getAccountNumber());
+                    customer.getUserId(), typeBox.getValue(), deposit, currency, lockIn);
+                resultLabel.setText("✓ Account created! Number: " + account.getAccountNumber() +
+                    " | Currency: " + account.getCurrency());
                 resultLabel.getStyleClass().setAll("alert-success");
                 resultLabel.setVisible(true);
                 depositField.clear();
@@ -335,7 +371,7 @@ public class CustomerDashboard {
             }
         });
 
-        form.getChildren().addAll(typeLabel, typeBox, minLabel,
+        form.getChildren().addAll(typeLabel, typeBox, currLabel, currBox, minLabel,
                 depLabel, depositField, lockLabel, lockBox,
                 resultLabel, createBtn);
 
@@ -370,13 +406,13 @@ public class CustomerDashboard {
         accLabel.getStyleClass().add("field-label");
         ComboBox<String> accBox = new ComboBox<>();
         for (Account acc : customer.getAccounts()) {
-            accBox.getItems().add(acc.getAccountNumber() + " — $" +
-                    ValidationUtil.formatAmount(acc.getBalance()));
+            String sym = getCurrencySymbol(acc.getCurrency());
+            accBox.getItems().add(acc.getAccountNumber() + " [" + acc.getCurrency() + "] — " + sym + ValidationUtil.formatAmount(acc.getBalance()));
         }
         if (!accBox.getItems().isEmpty()) accBox.setValue(accBox.getItems().get(0));
         accBox.setMaxWidth(Double.MAX_VALUE);
 
-        Label amtLabel = new Label("Amount ($)");
+        Label amtLabel = new Label("Amount");
         amtLabel.getStyleClass().add("field-label");
         TextField amountField = new TextField();
         amountField.setPromptText("Enter amount");
@@ -398,7 +434,7 @@ public class CustomerDashboard {
         submitBtn.setMaxWidth(Double.MAX_VALUE);
         submitBtn.setOnAction(e -> {
             try {
-                String accNum = accBox.getValue().split(" — ")[0];
+                String accNum = accBox.getValue().split(" \\[")[0];
                 double amount = Double.parseDouble(amountField.getText());
                 String desc = descField.getText().isEmpty() ?
                         (isDeposit ? "Cash deposit" : "Cash withdrawal") : descField.getText();
@@ -408,21 +444,24 @@ public class CustomerDashboard {
                 } else {
                     txn = bank.getTransactionService().withdraw(accNum, amount, desc);
                 }
-                resultLabel.setText("✓ " + type + " of $" + ValidationUtil.formatAmount(amount) + " successful! Txn: " + txn.getTransactionId());
+                Account updatedAcc = bank.getAccountService().getAccount(accNum);
+                String curr = updatedAcc.getCurrency();
+                resultLabel.setText("✓ " + type + " of " + getCurrencySymbol(curr) + ValidationUtil.formatAmount(amount) + " successful! Txn: " + txn.getTransactionId());
                 resultLabel.getStyleClass().setAll("alert-success");
                 resultLabel.setVisible(true);
                 amountField.clear();
                 // Refresh account balances in combo
                 accBox.getItems().clear();
                 for (Account acc : customer.getAccounts()) {
-                    accBox.getItems().add(acc.getAccountNumber() + " — $" +
+                    String sym = getCurrencySymbol(acc.getCurrency());
+                    accBox.getItems().add(acc.getAccountNumber() + " [" + acc.getCurrency() + "] — " + sym +
                             ValidationUtil.formatAmount(acc.getBalance()));
                 }
                 if (!accBox.getItems().isEmpty()) accBox.setValue(accBox.getItems().get(0));
             } catch (NumberFormatException ex) {
                 resultLabel.setText("⚠ Enter a valid number."); resultLabel.getStyleClass().setAll("alert-error"); resultLabel.setVisible(true);
             } catch (InsufficientFundsException ex) {
-                resultLabel.setText("⚠ Insufficient funds. Available: $" + ValidationUtil.formatAmount(ex.getAvailableBalance()));
+                resultLabel.setText("⚠ Insufficient funds.");
                 resultLabel.getStyleClass().setAll("alert-error"); resultLabel.setVisible(true);
             } catch (Exception ex) {
                 resultLabel.setText("⚠ " + ex.getMessage()); resultLabel.getStyleClass().setAll("alert-error"); resultLabel.setVisible(true);
@@ -450,7 +489,8 @@ public class CustomerDashboard {
         srcLabel.getStyleClass().add("field-label");
         ComboBox<String> srcBox = new ComboBox<>();
         for (Account acc : customer.getAccounts()) {
-            srcBox.getItems().add(acc.getAccountNumber() + " — $" + ValidationUtil.formatAmount(acc.getBalance()));
+            String sym = getCurrencySymbol(acc.getCurrency());
+            srcBox.getItems().add(acc.getAccountNumber() + " [" + acc.getCurrency() + "] — " + sym + ValidationUtil.formatAmount(acc.getBalance()));
         }
         if (!srcBox.getItems().isEmpty()) srcBox.setValue(srcBox.getItems().get(0));
         srcBox.setMaxWidth(Double.MAX_VALUE);
@@ -461,11 +501,51 @@ public class CustomerDashboard {
         destField.setPromptText("Enter destination account number");
         destField.setPrefHeight(38);
 
-        Label amtLabel = new Label("Amount ($)");
+        Label amtLabel = new Label("Amount");
         amtLabel.getStyleClass().add("field-label");
         TextField amtField = new TextField();
         amtField.setPromptText("Enter transfer amount");
         amtField.setPrefHeight(38);
+
+        // Cross-currency info label
+        Label crossCurrInfo = new Label();
+        crossCurrInfo.setWrapText(true);
+        crossCurrInfo.setStyle("-fx-background-color: #EBF5FB; -fx-padding: 10; -fx-background-radius: 6;");
+        crossCurrInfo.setVisible(false);
+
+        // Preview button for cross-currency
+        Button previewBtn = new Button("🔍 Preview Conversion");
+        previewBtn.getStyleClass().add("btn-secondary");
+        previewBtn.setMaxWidth(Double.MAX_VALUE);
+        previewBtn.setOnAction(e -> {
+            try {
+                String srcAcc = srcBox.getValue().split(" \\[")[0];
+                String destAcc = destField.getText().trim();
+                if (destAcc.isEmpty()) { crossCurrInfo.setText("⚠ Enter destination account first."); crossCurrInfo.setVisible(true); return; }
+                Account src = bank.getAccountService().getAccount(srcAcc);
+                Account dst = bank.getAccountService().getAccount(destAcc);
+                if (!src.getCurrency().equals(dst.getCurrency())) {
+                    double amt = Double.parseDouble(amtField.getText());
+                    double rate = bank.getCurrencyService().getExchangeRate(src.getCurrency(), dst.getCurrency());
+                    double converted = bank.getCurrencyService().convert(amt, src.getCurrency(), dst.getCurrency());
+                    double fee = converted * 0.005;
+                    double net = converted - fee;
+                    crossCurrInfo.setText("💱 Cross-Currency Transfer\n" +
+                        src.getCurrency() + " → " + dst.getCurrency() + " | Rate: 1 " + src.getCurrency() + " = " + String.format("%.4f", rate) + " " + dst.getCurrency() + "\n" +
+                        "Converted: " + getCurrencySymbol(dst.getCurrency()) + ValidationUtil.formatAmount(converted) + "\n" +
+                        "Fee (0.5%): " + getCurrencySymbol(dst.getCurrency()) + ValidationUtil.formatAmount(fee) + "\n" +
+                        "Net amount: " + getCurrencySymbol(dst.getCurrency()) + ValidationUtil.formatAmount(net));
+                    crossCurrInfo.setVisible(true);
+                } else {
+                    crossCurrInfo.setText("✓ Same currency (" + src.getCurrency() + ") — no conversion needed.");
+                    crossCurrInfo.setVisible(true);
+                }
+            } catch (NumberFormatException ex) {
+                crossCurrInfo.setText("⚠ Enter a valid amount first."); crossCurrInfo.setVisible(true);
+            } catch (Exception ex) {
+                crossCurrInfo.setText("⚠ " + ex.getMessage()); crossCurrInfo.setVisible(true);
+            }
+        });
 
         Label resultLabel = new Label();
         resultLabel.setWrapText(true);
@@ -477,13 +557,20 @@ public class CustomerDashboard {
         transferBtn.setMaxWidth(Double.MAX_VALUE);
         transferBtn.setOnAction(e -> {
             try {
-                String srcAcc = srcBox.getValue().split(" — ")[0];
+                String srcAcc = srcBox.getValue().split(" \\[")[0];
                 double amount = Double.parseDouble(amtField.getText());
-                Transaction txn = bank.getTransactionService().transfer(srcAcc, destField.getText(), amount, null);
-                resultLabel.setText("✓ Transferred $" + ValidationUtil.formatAmount(amount) + " successfully!");
+                Transaction txn = bank.getTransactionService().transfer(srcAcc, destField.getText().trim(), amount, null);
+                resultLabel.setText("✓ Transfer successful! Txn: " + txn.getTransactionId());
                 resultLabel.getStyleClass().setAll("alert-success");
                 resultLabel.setVisible(true);
-                amtField.clear(); destField.clear();
+                amtField.clear(); destField.clear(); crossCurrInfo.setVisible(false);
+                // Refresh source account list
+                srcBox.getItems().clear();
+                for (Account acc : customer.getAccounts()) {
+                    String sym = getCurrencySymbol(acc.getCurrency());
+                    srcBox.getItems().add(acc.getAccountNumber() + " [" + acc.getCurrency() + "] — " + sym + ValidationUtil.formatAmount(acc.getBalance()));
+                }
+                if (!srcBox.getItems().isEmpty()) srcBox.setValue(srcBox.getItems().get(0));
             } catch (NumberFormatException ex) {
                 resultLabel.setText("⚠ Enter a valid amount."); resultLabel.getStyleClass().setAll("alert-error"); resultLabel.setVisible(true);
             } catch (Exception ex) {
@@ -491,7 +578,7 @@ public class CustomerDashboard {
             }
         });
 
-        form.getChildren().addAll(srcLabel, srcBox, destLabel, destField, amtLabel, amtField, resultLabel, transferBtn);
+        form.getChildren().addAll(srcLabel, srcBox, destLabel, destField, amtLabel, amtField, previewBtn, crossCurrInfo, resultLabel, transferBtn);
         page.getChildren().addAll(title, form);
         setContent(page);
     }
@@ -668,7 +755,8 @@ public class CustomerDashboard {
                     Label id = new Label(loan.getLoanId() != null ? loan.getLoanId() : "N/A");
                     id.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
                     Label type = new Label(loan.getLoanType() != null ? loan.getLoanType().getDisplayName() : "Unknown");
-                    Label amount = new Label("$" + ValidationUtil.formatAmount(loan.getLoanAmount()));
+                    String loanSym = CurrencyUtil.getCurrencySymbol(null);
+                    Label amount = new Label(loanSym + " " + ValidationUtil.formatAmount(loan.getLoanAmount()));
                     amount.setStyle("-fx-font-weight: bold; -fx-text-fill: #4A90D9;");
 
                     String statusText = loan.getStatus() != null ? loan.getStatus().getDisplayName() : "Unknown";
@@ -782,16 +870,143 @@ public class CustomerDashboard {
         VBox page = new VBox(20);
         Label title = new Label("Currency Exchange");
         title.getStyleClass().add("page-title");
+        Label subtitle = new Label("Convert funds between your accounts in different currencies");
+        subtitle.setStyle("-fx-text-fill: #7F8C8D; -fx-font-size: 13px;");
 
-        VBox form = new VBox(16);
-        form.getStyleClass().add("card");
-        form.setMaxWidth(500);
+        // ─── Section 1: Actual Conversion ───
+        VBox conversionCard = new VBox(16);
+        conversionCard.getStyleClass().add("card");
+        conversionCard.setMaxWidth(550);
+
+        Label convTitle = new Label("💱 Convert Between Accounts");
+        convTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
+
+        Label srcLabel = new Label("From Account");
+        srcLabel.getStyleClass().add("field-label");
+        ComboBox<String> srcAccBox = new ComboBox<>();
+        for (Account acc : customer.getAccounts()) {
+            String sym = getCurrencySymbol(acc.getCurrency());
+            srcAccBox.getItems().add(acc.getAccountNumber() + " [" + acc.getCurrency() + "] — " + sym + ValidationUtil.formatAmount(acc.getBalance()));
+        }
+        if (!srcAccBox.getItems().isEmpty()) srcAccBox.setValue(srcAccBox.getItems().get(0));
+        srcAccBox.setMaxWidth(Double.MAX_VALUE);
+
+        Label dstLabel = new Label("To Account");
+        dstLabel.getStyleClass().add("field-label");
+        ComboBox<String> dstAccBox = new ComboBox<>();
+        for (Account acc : customer.getAccounts()) {
+            String sym = getCurrencySymbol(acc.getCurrency());
+            dstAccBox.getItems().add(acc.getAccountNumber() + " [" + acc.getCurrency() + "] — " + sym + ValidationUtil.formatAmount(acc.getBalance()));
+        }
+        if (dstAccBox.getItems().size() > 1) dstAccBox.setValue(dstAccBox.getItems().get(1));
+        else if (!dstAccBox.getItems().isEmpty()) dstAccBox.setValue(dstAccBox.getItems().get(0));
+        dstAccBox.setMaxWidth(Double.MAX_VALUE);
+
+        Label amtLabel = new Label("Amount");
+        amtLabel.getStyleClass().add("field-label");
+        TextField amtField = new TextField();
+        amtField.setPromptText("Enter amount to convert");
+        amtField.setPrefHeight(38);
+
+        // Preview area
+        Label previewLabel = new Label();
+        previewLabel.setWrapText(true);
+        previewLabel.setStyle("-fx-background-color: #EBF5FB; -fx-padding: 12; -fx-background-radius: 6;");
+        previewLabel.setVisible(false);
+
+        Label convResultLabel = new Label();
+        convResultLabel.setWrapText(true);
+        convResultLabel.setVisible(false);
+
+        Button previewBtn = new Button("🔍 Preview Conversion");
+        previewBtn.getStyleClass().add("btn-secondary");
+        previewBtn.setMaxWidth(Double.MAX_VALUE);
+        previewBtn.setOnAction(e -> {
+            try {
+                String srcAcc = srcAccBox.getValue().split(" \\[")[0];
+                String dstAcc = dstAccBox.getValue().split(" \\[")[0];
+                if (srcAcc.equals(dstAcc)) { previewLabel.setText("⚠ Select two different accounts."); previewLabel.setVisible(true); return; }
+                Account src = bank.getAccountService().getAccount(srcAcc);
+                Account dst = bank.getAccountService().getAccount(dstAcc);
+                if (src.getCurrency().equals(dst.getCurrency())) {
+                    previewLabel.setText("⚠ Both accounts use " + src.getCurrency() + ". Use Transfer instead.");
+                    previewLabel.setVisible(true); return;
+                }
+                double amount = Double.parseDouble(amtField.getText());
+                double rate = bank.getCurrencyService().getExchangeRate(src.getCurrency(), dst.getCurrency());
+                double converted = bank.getCurrencyService().convert(amount, src.getCurrency(), dst.getCurrency());
+                double fee = converted * 0.005;
+                double net = converted - fee;
+                previewLabel.setText(
+                    "Rate: 1 " + src.getCurrency() + " = " + String.format("%.4f", rate) + " " + dst.getCurrency() + "\n" +
+                    "Converted: " + getCurrencySymbol(dst.getCurrency()) + ValidationUtil.formatAmount(converted) + "\n" +
+                    "Fee (0.5%): " + getCurrencySymbol(dst.getCurrency()) + ValidationUtil.formatAmount(fee) + "\n" +
+                    "─────────────────────────\n" +
+                    "You receive: " + getCurrencySymbol(dst.getCurrency()) + ValidationUtil.formatAmount(net)
+                );
+                previewLabel.setVisible(true);
+            } catch (NumberFormatException ex) {
+                previewLabel.setText("⚠ Enter a valid amount."); previewLabel.setVisible(true);
+            } catch (Exception ex) {
+                previewLabel.setText("⚠ " + ex.getMessage()); previewLabel.setVisible(true);
+            }
+        });
+
+        Button convertBtn = new Button("💱 Convert Now");
+        convertBtn.getStyleClass().add("btn-primary");
+        convertBtn.setPrefHeight(40);
+        convertBtn.setMaxWidth(Double.MAX_VALUE);
+        convertBtn.setOnAction(e -> {
+            try {
+                String srcAcc = srcAccBox.getValue().split(" \\[")[0];
+                String dstAcc = dstAccBox.getValue().split(" \\[")[0];
+                if (srcAcc.equals(dstAcc)) { convResultLabel.setText("⚠ Select different accounts."); convResultLabel.getStyleClass().setAll("alert-error"); convResultLabel.setVisible(true); return; }
+                Account src = bank.getAccountService().getAccount(srcAcc);
+                Account dst = bank.getAccountService().getAccount(dstAcc);
+                if (src.getCurrency().equals(dst.getCurrency())) {
+                    convResultLabel.setText("⚠ Both accounts use the same currency. Use Transfer instead.");
+                    convResultLabel.getStyleClass().setAll("alert-error"); convResultLabel.setVisible(true); return;
+                }
+                double amount = Double.parseDouble(amtField.getText());
+                Transaction txn = bank.getTransactionService().transfer(srcAcc, dstAcc, amount, "Currency conversion");
+                convResultLabel.setText("✓ Conversion successful! Transaction: " + txn.getTransactionId());
+                convResultLabel.getStyleClass().setAll("alert-success");
+                convResultLabel.setVisible(true);
+                amtField.clear(); previewLabel.setVisible(false);
+                // Refresh account dropdowns
+                srcAccBox.getItems().clear();
+                dstAccBox.getItems().clear();
+                for (Account acc : customer.getAccounts()) {
+                    String sym = getCurrencySymbol(acc.getCurrency());
+                    String item = acc.getAccountNumber() + " [" + acc.getCurrency() + "] — " + sym + ValidationUtil.formatAmount(acc.getBalance());
+                    srcAccBox.getItems().add(item);
+                    dstAccBox.getItems().add(item);
+                }
+                if (!srcAccBox.getItems().isEmpty()) srcAccBox.setValue(srcAccBox.getItems().get(0));
+                if (dstAccBox.getItems().size() > 1) dstAccBox.setValue(dstAccBox.getItems().get(1));
+            } catch (NumberFormatException ex) {
+                convResultLabel.setText("⚠ Enter a valid amount."); convResultLabel.getStyleClass().setAll("alert-error"); convResultLabel.setVisible(true);
+            } catch (Exception ex) {
+                convResultLabel.setText("⚠ " + ex.getMessage()); convResultLabel.getStyleClass().setAll("alert-error"); convResultLabel.setVisible(true);
+            }
+        });
+
+        conversionCard.getChildren().addAll(convTitle, srcLabel, srcAccBox, dstLabel, dstAccBox,
+                amtLabel, amtField, previewBtn, previewLabel, convResultLabel, convertBtn);
+
+        // ─── Section 2: Rate Calculator ───
+        VBox calcCard = new VBox(16);
+        calcCard.getStyleClass().add("card");
+        calcCard.setMaxWidth(550);
+
+        Label calcTitle = new Label("📊 Rate Calculator");
+        calcTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
 
         Label fromLabel = new Label("From Currency");
         fromLabel.getStyleClass().add("field-label");
         ComboBox<String> fromBox = new ComboBox<>();
-        fromBox.getItems().addAll("USD", "EUR", "GBP", "LKR");
-        fromBox.setValue("USD");
+        fromBox.getItems().addAll("LKR", "USD", "EUR", "GBP");
+        fromBox.setValue("LKR");
         fromBox.setMaxWidth(Double.MAX_VALUE);
 
         Label toLabel = new Label("To Currency");
@@ -801,43 +1016,46 @@ public class CustomerDashboard {
         toBox.setValue("LKR");
         toBox.setMaxWidth(Double.MAX_VALUE);
 
-        Label amtLabel = new Label("Amount");
-        amtLabel.getStyleClass().add("field-label");
-        TextField amtField = new TextField();
-        amtField.setPromptText("Enter amount");
-        amtField.setPrefHeight(38);
+        Label calcAmtLabel = new Label("Amount");
+        calcAmtLabel.getStyleClass().add("field-label");
+        TextField calcAmtField = new TextField();
+        calcAmtField.setPromptText("Enter amount");
+        calcAmtField.setPrefHeight(38);
 
-        Label resultLabel = new Label();
-        resultLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #4A90D9;");
-        resultLabel.setVisible(false);
+        Label calcResultLabel = new Label();
+        calcResultLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #4A90D9;");
+        calcResultLabel.setVisible(false);
 
         Label rateLabel = new Label();
         rateLabel.setStyle("-fx-text-fill: #7F8C8D; -fx-font-size: 12px;");
         rateLabel.setVisible(false);
 
-        Button convertBtn = new Button("💱 Convert");
-        convertBtn.getStyleClass().add("btn-primary");
-        convertBtn.setPrefHeight(40);
-        convertBtn.setMaxWidth(Double.MAX_VALUE);
-        convertBtn.setOnAction(e -> {
+        Button calcBtn = new Button("🔢 Calculate");
+        calcBtn.getStyleClass().add("btn-secondary");
+        calcBtn.setPrefHeight(36);
+        calcBtn.setMaxWidth(Double.MAX_VALUE);
+        calcBtn.setOnAction(e -> {
             try {
-                double amount = Double.parseDouble(amtField.getText());
+                double amount = Double.parseDouble(calcAmtField.getText());
                 double converted = bank.getCurrencyService().convert(amount, fromBox.getValue(), toBox.getValue());
                 double rate = bank.getCurrencyService().getExchangeRate(fromBox.getValue(), toBox.getValue());
-                resultLabel.setText(ValidationUtil.formatAmount(amount) + " " + fromBox.getValue() +
+                calcResultLabel.setText(ValidationUtil.formatAmount(amount) + " " + fromBox.getValue() +
                         " = " + ValidationUtil.formatAmount(converted) + " " + toBox.getValue());
-                resultLabel.setVisible(true);
+                calcResultLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #4A90D9;");
+                calcResultLabel.setVisible(true);
                 rateLabel.setText("Rate: 1 " + fromBox.getValue() + " = " + String.format("%.4f", rate) + " " + toBox.getValue());
                 rateLabel.setVisible(true);
             } catch (Exception ex) {
-                resultLabel.setText("Error: " + ex.getMessage());
-                resultLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #E74C3C;");
-                resultLabel.setVisible(true);
+                calcResultLabel.setText("Error: " + ex.getMessage());
+                calcResultLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #E74C3C;");
+                calcResultLabel.setVisible(true);
             }
         });
 
-        form.getChildren().addAll(fromLabel, fromBox, toLabel, toBox, amtLabel, amtField, convertBtn, resultLabel, rateLabel);
-        page.getChildren().addAll(title, form);
+        calcCard.getChildren().addAll(calcTitle, fromLabel, fromBox, toLabel, toBox,
+                calcAmtLabel, calcAmtField, calcBtn, calcResultLabel, rateLabel);
+
+        page.getChildren().addAll(title, subtitle, conversionCard, calcCard);
         setContent(page);
     }
 
@@ -1071,7 +1289,8 @@ public class CustomerDashboard {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         boolean isPositive = txn.getType() == TransactionType.DEPOSIT;
-        Label amount = new Label((isPositive ? "+" : "-") + "$" + ValidationUtil.formatAmount(txn.getAmount()));
+        String sym = CurrencyUtil.getCurrencySymbol(txn.getCurrency());
+        Label amount = new Label((isPositive ? "+" : "-") + sym + ValidationUtil.formatAmount(txn.getAmount()));
         amount.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: " +
                 (isPositive ? "#27AE60" : "#E74C3C") + ";");
 

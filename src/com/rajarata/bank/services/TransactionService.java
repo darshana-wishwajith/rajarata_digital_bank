@@ -84,7 +84,7 @@ public class TransactionService {
         // Validate amount
         if (!ValidationUtil.isValidDeposit(amount)) {
             throw new InvalidInputException(
-                "Invalid deposit amount. Minimum is $" + ValidationUtil.formatAmount(Account.MIN_DEPOSIT),
+                "Invalid deposit amount. Minimum is " + ValidationUtil.formatAmount(Account.MIN_DEPOSIT),
                 "amount");
         }
 
@@ -108,8 +108,8 @@ public class TransactionService {
             sendNotification(account.getCustomerId(),
                     AlertType.TRANSACTION_SUCCESS,
                     "Deposit Successful",
-                    "$" + ValidationUtil.formatAmount(amount) + " deposited to " +
-                    accountNumber + ". New balance: $" + ValidationUtil.formatAmount(account.getBalance()));
+                    account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + " deposited to " +
+                    accountNumber + ". New balance: " + account.getCurrency() + " " + ValidationUtil.formatAmount(account.getBalance()));
             checkLargeTransaction(account, amount);
 
         } catch (InvalidAccountException e) {
@@ -122,7 +122,7 @@ public class TransactionService {
             sendNotification(account.getCustomerId(),
                     AlertType.TRANSACTION_FAILED,
                     "Deposit Failed",
-                    "Failed to deposit $" + ValidationUtil.formatAmount(amount) +
+                    "Failed to deposit " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) +
                     " to " + accountNumber + ". Reason: " + e.getMessage());
             throw e;
         }
@@ -164,26 +164,26 @@ public class TransactionService {
             accountService.saveAllAccounts();
             FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
             FileHandler.logAudit("WITHDRAWAL",
-                    "Withdrawal $" + ValidationUtil.formatAmount(amount) + " from " + accountNumber);
+                    "Withdrawal " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + " from " + accountNumber);
 
             // Success notification
             sendNotification(account.getCustomerId(),
                     AlertType.TRANSACTION_SUCCESS,
                     "Withdrawal Successful",
-                    "$" + ValidationUtil.formatAmount(amount) + " withdrawn from " +
-                    accountNumber + ". New balance: $" + ValidationUtil.formatAmount(account.getBalance()));
+                    account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + " withdrawn from " +
+                    accountNumber + ". New balance: " + account.getCurrency() + " " + ValidationUtil.formatAmount(account.getBalance()));
 
             // Check for overdraft usage on CheckingAccount — audit log + alert
             if (account instanceof CheckingAccount && account.getBalance() < 0) {
                 double overdraftUsed = Math.abs(account.getBalance());
                 FileHandler.logAudit("OVERDRAFT_USED",
-                        "Account " + accountNumber + " is now in overdraft. Amount: $" +
-                        ValidationUtil.formatAmount(overdraftUsed));
+                        "Account " + accountNumber + " is now in overdraft. Amount: " +
+                        account.getCurrency() + " " + ValidationUtil.formatAmount(overdraftUsed));
                 sendNotification(account.getCustomerId(),
                         AlertType.OVERDRAFT_ALERT,
                         "Overdraft Facility Used",
-                        "Your checking account " + accountNumber + " is now in overdraft by $" +
-                        ValidationUtil.formatAmount(overdraftUsed) +
+                        "Your checking account " + accountNumber + " is now in overdraft by " +
+                        account.getCurrency() + " " + ValidationUtil.formatAmount(overdraftUsed) +
                         ". Overdraft interest (15% p.a.) will be charged.");
             }
 
@@ -201,7 +201,7 @@ public class TransactionService {
             sendNotification(account.getCustomerId(),
                     AlertType.TRANSACTION_FAILED,
                     "Withdrawal Failed",
-                    "Failed to withdraw $" + ValidationUtil.formatAmount(amount) +
+                    "Failed to withdraw " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) +
                     " from " + accountNumber + ". Reason: " + e.getMessage());
             throw e;
         }
@@ -290,8 +290,8 @@ public class TransactionService {
             FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, destTxn.toFileString());
 
             // Build audit message
-            String auditMsg = "Transfer $" + ValidationUtil.formatAmount(amount) + " " +
-                    sourceCurrency + " from " + sourceAccountNumber + " to " + destAccountNumber;
+            String auditMsg = "Transfer " + sourceCurrency + " " + ValidationUtil.formatAmount(amount) +
+                    " from " + sourceAccountNumber + " to " + destAccountNumber;
             if (isCrossCurrency) {
                 auditMsg += " (converted to " + ValidationUtil.formatAmount(depositAmount) +
                         " " + destCurrency + ", fee: " + ValidationUtil.formatAmount(conversionFee) +
@@ -300,21 +300,21 @@ public class TransactionService {
             FileHandler.logAudit("TRANSFER", auditMsg);
 
             // Success notifications — notify both sender and receiver
-            String senderMsg = "$" + ValidationUtil.formatAmount(amount) + " " + sourceCurrency +
+            String senderMsg = ValidationUtil.formatAmount(amount) + " " + sourceCurrency +
                     " transferred from " + sourceAccountNumber + " to " + destAccountNumber;
             if (isCrossCurrency) {
                 senderMsg += " (" + ValidationUtil.formatAmount(depositAmount) + " " + destCurrency +
                         " received, fee: " + ValidationUtil.formatAmount(conversionFee) + " " + destCurrency + ")";
             }
-            senderMsg += ". New balance: $" + ValidationUtil.formatAmount(sourceAccount.getBalance());
+            senderMsg += ". New balance: " + sourceCurrency + " " + ValidationUtil.formatAmount(sourceAccount.getBalance());
             sendNotification(sourceAccount.getCustomerId(),
                     AlertType.TRANSFER_SUCCESS, "Transfer Sent", senderMsg);
 
             String receiverMsg = (isCrossCurrency
                     ? ValidationUtil.formatAmount(depositAmount) + " " + destCurrency
-                    : "$" + ValidationUtil.formatAmount(amount))
+                    : ValidationUtil.formatAmount(amount) + " " + sourceCurrency)
                     + " received from " + sourceAccountNumber +
-                    ". New balance: $" + ValidationUtil.formatAmount(destAccount.getBalance());
+                    ". New balance: " + destCurrency + " " + ValidationUtil.formatAmount(destAccount.getBalance());
             sendNotification(destAccount.getCustomerId(),
                     AlertType.TRANSFER_SUCCESS, "Transfer Received", receiverMsg);
 
@@ -322,13 +322,13 @@ public class TransactionService {
             if (sourceAccount instanceof CheckingAccount && sourceAccount.getBalance() < 0) {
                 double overdraftUsed = Math.abs(sourceAccount.getBalance());
                 FileHandler.logAudit("OVERDRAFT_USED",
-                        "Account " + sourceAccountNumber + " is now in overdraft. Amount: $" +
-                        ValidationUtil.formatAmount(overdraftUsed));
+                        "Account " + sourceAccountNumber + " is now in overdraft. Amount: " +
+                        sourceCurrency + " " + ValidationUtil.formatAmount(overdraftUsed));
                 sendNotification(sourceAccount.getCustomerId(),
                         AlertType.OVERDRAFT_ALERT,
                         "Overdraft Facility Used",
-                        "Your checking account " + sourceAccountNumber + " is now in overdraft by $" +
-                        ValidationUtil.formatAmount(overdraftUsed) +
+                        "Your checking account " + sourceAccountNumber + " is now in overdraft by " +
+                        sourceCurrency + " " + ValidationUtil.formatAmount(overdraftUsed) +
                         ". Overdraft interest (15% p.a.) will be charged.");
             }
 
@@ -347,7 +347,7 @@ public class TransactionService {
             sendNotification(sourceAccount.getCustomerId(),
                     AlertType.TRANSACTION_FAILED,
                     "Transfer Failed",
-                    "Failed to transfer $" + ValidationUtil.formatAmount(amount) +
+                    "Failed to transfer " + sourceCurrency + " " + ValidationUtil.formatAmount(amount) +
                     " from " + sourceAccountNumber + ". Reason: " + e.getMessage());
             throw e;
         }
@@ -469,9 +469,9 @@ public class TransactionService {
                 sendNotification(account.getCustomerId(),
                         AlertType.LOW_BALANCE,
                         "Low Balance Warning",
-                        "Account " + account.getAccountNumber() + " balance is $" +
-                        ValidationUtil.formatAmount(account.getBalance()) +
-                        ". Minimum balance: $" + ValidationUtil.formatAmount(minBalance));
+                        "Account " + account.getAccountNumber() + " balance is " +
+                        account.getCurrency() + " " + ValidationUtil.formatAmount(account.getBalance()) +
+                        ". Minimum balance: " + account.getCurrency() + " " + ValidationUtil.formatAmount(minBalance));
             }
         }
     }
@@ -484,7 +484,7 @@ public class TransactionService {
             sendNotification(account.getCustomerId(),
                     AlertType.LARGE_TRANSACTION,
                     "Large Transaction Alert",
-                    "A transaction of $" + ValidationUtil.formatAmount(amount) +
+                    "A transaction of " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) +
                     " was processed on account " + account.getAccountNumber());
         }
     }

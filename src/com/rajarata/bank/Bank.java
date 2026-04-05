@@ -52,7 +52,7 @@ public class Bank {
         this.notificationService = new NotificationService(authService);
         this.billPaymentService = new BillPaymentService(transactionService, accountService);
         this.currencyService = new CurrencyService();
-        this.fraudDetectionService = new FraudDetectionService(accountService);
+        this.fraudDetectionService = new FraudDetectionService(accountService, currencyService);
         this.reportingService = new ReportingService(accountService, authService, loanService);
 
         // Wire notification service (avoids circular dependency)
@@ -150,7 +150,7 @@ public class Bank {
         sb.append("║                                                              ║\n");
         sb.append("║            RAJARATA DIGITAL BANK                             ║\n");
         sb.append("║         Your Trusted Banking Partner                         ║\n");
-        sb.append("║                 Version " + VERSION + "                                ║\n");
+        sb.append("║                 Version " + VERSION + "                      ║\n");
         sb.append("║                                                              ║\n");
         sb.append("╚══════════════════════════════════════════════════════════════╝\n");
         return sb.toString();

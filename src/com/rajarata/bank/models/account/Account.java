@@ -69,7 +69,7 @@ public abstract class Account implements Transactable, InterestBearing, Reportab
     /** Minimum deposit amount */
     public static final double MIN_DEPOSIT = 10.0;
     /** Default currency for new accounts */
-    public static final String DEFAULT_CURRENCY = "USD";
+    public static final String DEFAULT_CURRENCY = "LKR";
 
     // ==================== CONSTRUCTORS ====================
 

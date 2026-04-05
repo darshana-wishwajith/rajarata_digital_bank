@@ -8,6 +8,7 @@ import com.rajarata.bank.utils.*;
 
 import java.util.*;
 
+
 /**
  * Service class for detecting and managing potential fraud cases.
  * Monitors transactions for suspicious patterns including:
@@ -27,15 +28,16 @@ public class FraudDetectionService {
     private final Map<String, String[]> fraudCases;
     private NotificationService notificationService;
     private final AccountService accountService;
+    private final CurrencyService currencyService;
 
-    /** Threshold for single-transaction fraud alert */
-    private static final double LARGE_TRANSACTION_THRESHOLD = 10000.0;
+    /** Threshold for single-transaction fraud alert (LKR 1M ≈ $3000) */
+    private static final double LARGE_TRANSACTION_THRESHOLD = 1000000.0;
     /** Maximum number of withdrawals allowed in a short timeframe before flagging */
     private static final int RAPID_WITHDRAWAL_LIMIT = 3;
     /** Timeframe (in minutes) for velocity checking */
     private static final int VELOCITY_WINDOW_MINUTES = 10;
-    /** Cumulative withdrawal threshold in velocity window */
-    private static final double VELOCITY_AMOUNT_THRESHOLD = 15000.0;
+    /** Cumulative withdrawal threshold in velocity window (LKR 3M ≈ $10k) */
+    private static final double VELOCITY_AMOUNT_THRESHOLD = 3000000.0;
 
     private static int caseCounter = 0;
 
@@ -45,9 +47,10 @@ public class FraudDetectionService {
      */
     private final Map<String, List<double[]>> recentWithdrawals;
 
-    public FraudDetectionService(AccountService accountService) {
+    public FraudDetectionService(AccountService accountService, CurrencyService currencyService) {
         this.fraudCases = new HashMap<>();
         this.accountService = accountService;
+        this.currencyService = currencyService;
         this.recentWithdrawals = new HashMap<>();
     }
 
@@ -71,10 +74,13 @@ public class FraudDetectionService {
     public boolean checkTransaction(Transaction transaction, Account account) {
         boolean suspicious = false;
 
+        // Normalize amount to LKR for threshold checks
+        double amountInLKR = currencyService.convert(transaction.getAmount(), transaction.getCurrency(), "LKR");
+
         // 1. Large single-transaction check
-        if (transaction.getAmount() > LARGE_TRANSACTION_THRESHOLD) {
+        if (amountInLKR >= LARGE_TRANSACTION_THRESHOLD) {
             flagSuspiciousActivity(account.getCustomerId(), account.getAccountNumber(),
-                    "Large transaction: $" + ValidationUtil.formatAmount(transaction.getAmount()),
+                    "Large transaction: " + transaction.getCurrency() + " " + ValidationUtil.formatAmount(transaction.getAmount()),
                     "LARGE_TRANSACTION");
             suspicious = true;
         }
@@ -82,7 +88,7 @@ public class FraudDetectionService {
         // 2. Velocity check — rapid successive withdrawals
         if (transaction.getType() == TransactionType.WITHDRAWAL ||
             transaction.getType() == TransactionType.TRANSFER) {
-            suspicious = checkWithdrawalVelocity(account, transaction.getAmount()) || suspicious;
+            suspicious = checkWithdrawalVelocity(account, transaction.getAmount(), transaction.getCurrency()) || suspicious;
         }
 
         return suspicious;
@@ -100,16 +106,19 @@ public class FraudDetectionService {
      * @param amount The current withdrawal amount
      * @return true if velocity limit was triggered
      */
-    private boolean checkWithdrawalVelocity(Account account, double amount) {
+    private boolean checkWithdrawalVelocity(Account account, double amount, String currency) {
         String accNum = account.getAccountNumber();
         long currentTimeMillis = System.currentTimeMillis();
+
+        // Normalize amount to LKR for threshold checks
+        double amountInLKR = currencyService.convert(amount, currency, "LKR");
 
         // Initialize tracking list if needed
         recentWithdrawals.computeIfAbsent(accNum, k -> new ArrayList<>());
         List<double[]> history = recentWithdrawals.get(accNum);
 
         // Add current withdrawal
-        history.add(new double[]{ currentTimeMillis, amount });
+        history.add(new double[]{ currentTimeMillis, amountInLKR });
 
         // Remove entries outside the velocity window
         long windowStart = currentTimeMillis - (VELOCITY_WINDOW_MINUTES * 60 * 1000L);
@@ -127,13 +136,13 @@ public class FraudDetectionService {
         }
 
         // Check amount-based velocity (cumulative > threshold in window)
-        double cumulativeAmount = 0;
+        double cumulativeAmountLKR = 0;
         for (double[] entry : history) {
-            cumulativeAmount += entry[1];
+            cumulativeAmountLKR += entry[1];
         }
-        if (cumulativeAmount > VELOCITY_AMOUNT_THRESHOLD) {
+        if (cumulativeAmountLKR > VELOCITY_AMOUNT_THRESHOLD) {
             flagSuspiciousActivity(account.getCustomerId(), accNum,
-                    "High cumulative withdrawals: $" + ValidationUtil.formatAmount(cumulativeAmount) +
+                    "High cumulative withdrawals: LKR " + ValidationUtil.formatAmount(cumulativeAmountLKR) +
                     " within " + VELOCITY_WINDOW_MINUTES + " minutes",
                     "HIGH_CUMULATIVE_WITHDRAWAL");
             triggered = true;

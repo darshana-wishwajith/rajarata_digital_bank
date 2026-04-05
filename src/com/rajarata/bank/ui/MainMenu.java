@@ -339,9 +339,25 @@ public class MainMenu {
             default: ConsoleUI.printError("Invalid choice."); return;
         }
 
+        // Currency selection — multi-currency accounts
+        System.out.println("\n  Account Currency:");
+        System.out.println("  1. LKR (Sri Lankan Rupee)");
+        System.out.println("  2. USD (US Dollar)");
+        System.out.println("  3. EUR (Euro)");
+        System.out.println("  4. GBP (British Pound)");
+        int currChoice = ConsoleUI.readInt("Select currency (1-4)");
+        String currency;
+        switch (currChoice) {
+            case 1: currency = "LKR"; break;
+            case 2: currency = "USD"; break;
+            case 3: currency = "EUR"; break;
+            case 4: currency = "GBP"; break;
+            default: currency = "LKR"; break;
+        }
+
         double minDeposit = AccountFactory.getMinimumDeposit(accountType);
-        System.out.println("  Minimum initial deposit: $" + ValidationUtil.formatAmount(minDeposit));
-        double deposit = ConsoleUI.readDouble("Initial deposit amount ($)");
+        System.out.println("  Minimum initial deposit: " + currency + " " + ValidationUtil.formatAmount(minDeposit));
+        double deposit = ConsoleUI.readDouble("Initial deposit amount (" + currency + ")");
 
         int lockIn = 0;
         if ("Fixed Deposit".equals(accountType)) {
@@ -351,10 +367,11 @@ public class MainMenu {
 
         try {
             Account account = bank.getAccountService().openAccount(
-                    customer.getUserId(), accountType, deposit, "USD", lockIn);
+                    customer.getUserId(), accountType, deposit, currency, lockIn);
             ConsoleUI.printSuccess("Account created! Number: " + account.getAccountNumber());
             System.out.println("  Type: " + account.getAccountType());
-            System.out.println("  Balance: $" + ValidationUtil.formatAmount(account.getBalance()));
+            System.out.println("  Currency: " + account.getCurrency());
+            System.out.println("  Balance: " + account.getCurrency() + " " + ValidationUtil.formatAmount(account.getBalance()));
         } catch (InvalidAccountException | InvalidInputException e) {
             ConsoleUI.printError(e.getMessage());
         }
@@ -368,7 +385,7 @@ public class MainMenu {
         }
         System.out.println(customer.getAccountsSummary());
         String accNum = ConsoleUI.readString("Account number");
-        double amount = ConsoleUI.readDouble("Deposit amount ($)");
+        double amount = ConsoleUI.readDouble("Deposit amount");
         String desc = ConsoleUI.readString("Description (optional, press Enter to skip)");
         if (desc.isEmpty()) desc = "Cash deposit";
 
@@ -388,7 +405,7 @@ public class MainMenu {
         }
         System.out.println(customer.getAccountsSummary());
         String accNum = ConsoleUI.readString("Account number");
-        double amount = ConsoleUI.readDouble("Withdrawal amount ($)");
+        double amount = ConsoleUI.readDouble("Withdrawal amount");
 
         try {
             Transaction txn = bank.getTransactionService().withdraw(accNum, amount, "Cash withdrawal");
@@ -693,21 +710,80 @@ public class MainMenu {
         ConsoleUI.printHeader("CURRENCY EXCHANGE");
         System.out.println(bank.getCurrencyService().getExchangeRateDisplay());
 
-        String from = ConsoleUI.readString("Source currency (USD/EUR/GBP/LKR)").toUpperCase();
-        String to = ConsoleUI.readString("Target currency (USD/EUR/GBP/LKR)").toUpperCase();
-        double amount = ConsoleUI.readDouble("Amount to convert");
+        System.out.println("  1. Convert between my accounts (actual transfer)");
+        System.out.println("  2. Check exchange rates only (calculator)");
+        int mode = ConsoleUI.readInt("Select option");
 
-        if (!bank.getCurrencyService().isSupportedCurrency(from) ||
-            !bank.getCurrencyService().isSupportedCurrency(to)) {
-            ConsoleUI.printError("Unsupported currency.");
-            return;
+        if (mode == 1) {
+            // Actual currency conversion between accounts
+            if (customer.getAccountCount() < 2) {
+                ConsoleUI.printError("You need at least 2 accounts to perform a currency conversion.");
+                ConsoleUI.printInfo("Open accounts in different currencies first.");
+                return;
+            }
+
+            System.out.println(customer.getAccountsSummary());
+            String sourceAcc = ConsoleUI.readString("Source account number");
+            String destAcc = ConsoleUI.readString("Destination account number");
+
+            try {
+                Account srcAccount = bank.getAccountService().getAccount(sourceAcc);
+                Account dstAccount = bank.getAccountService().getAccount(destAcc);
+                String srcCurr = srcAccount.getCurrency();
+                String dstCurr = dstAccount.getCurrency();
+
+                if (srcCurr.equals(dstCurr)) {
+                    ConsoleUI.printInfo("Both accounts use " + srcCurr + ". Use the Transfer feature instead.");
+                    return;
+                }
+
+                double amount = ConsoleUI.readDouble("Amount to convert (" + srcCurr + ")");
+                double rate = bank.getCurrencyService().getExchangeRate(srcCurr, dstCurr);
+                double converted = bank.getCurrencyService().convert(amount, srcCurr, dstCurr);
+                double fee = converted * 0.005;
+                double netAmount = converted - fee;
+
+                System.out.println("\n  ┌─── Currency Conversion Preview ───────┐");
+                System.out.printf("  │ Source         : %s %-20s │\n", ValidationUtil.formatAmount(amount), srcCurr);
+                System.out.printf("  │ Exchange Rate  : 1 %s = %.4f %s    │\n", srcCurr, rate, dstCurr);
+                System.out.printf("  │ Converted      : %s %-20s │\n", ValidationUtil.formatAmount(converted), dstCurr);
+                System.out.printf("  │ Fee (0.5%%)     : %s %-20s │\n", ValidationUtil.formatAmount(fee), dstCurr);
+                System.out.printf("  │ Net to Dest    : %s %-20s │\n", ValidationUtil.formatAmount(netAmount), dstCurr);
+                System.out.println("  └─────────────────────────────────────────┘");
+
+                if (!ConsoleUI.confirm("Proceed with this currency conversion?")) {
+                    ConsoleUI.printInfo("Conversion cancelled.");
+                    return;
+                }
+
+                Transaction txn = bank.getTransactionService().transfer(sourceAcc, destAcc, amount, "Currency conversion");
+                ConsoleUI.printSuccess("Currency conversion successful!");
+                System.out.println("  " + ValidationUtil.formatAmount(amount) + " " + srcCurr +
+                        " → " + ValidationUtil.formatAmount(netAmount) + " " + dstCurr);
+                System.out.println("  Transaction ID: " + txn.getTransactionId());
+            } catch (Exception e) {
+                ConsoleUI.printError(e.getMessage());
+            }
+
+        } else {
+            // Calculator mode — just check rates
+            String from = ConsoleUI.readString("Source currency (USD/EUR/GBP/LKR)").toUpperCase();
+            String to = ConsoleUI.readString("Target currency (USD/EUR/GBP/LKR)").toUpperCase();
+            double amount = ConsoleUI.readDouble("Amount to convert");
+
+            if (!bank.getCurrencyService().isSupportedCurrency(from) ||
+                !bank.getCurrencyService().isSupportedCurrency(to)) {
+                ConsoleUI.printError("Unsupported currency.");
+                return;
+            }
+
+            double converted = bank.getCurrencyService().convert(amount, from, to);
+            double rate = bank.getCurrencyService().getExchangeRate(from, to);
+            System.out.printf("\n  %s %s = %s %s\n", ValidationUtil.formatAmount(amount), from,
+                    ValidationUtil.formatAmount(converted), to);
+            System.out.printf("  Exchange Rate: 1 %s = %.4f %s\n", from, rate, to);
+            ConsoleUI.printInfo("This is a rate check only. Use option 1 to actually convert between your accounts.");
         }
-
-        double converted = bank.getCurrencyService().convert(amount, from, to);
-        double rate = bank.getCurrencyService().getExchangeRate(from, to);
-        System.out.printf("\n  %s %s = %s %s\n", ValidationUtil.formatAmount(amount), from,
-                ValidationUtil.formatAmount(converted), to);
-        System.out.printf("  Exchange Rate: 1 %s = %.4f %s\n", from, rate, to);
         ConsoleUI.pressEnterToContinue();
     }
 
@@ -994,7 +1070,7 @@ public class MainMenu {
         Customer customer = bank.getAuthService().getCustomer(custId);
         if (customer != null) {
             System.out.println(customer.getAccountsSummary());
-            System.out.printf("  Total Balance: $%s\n", ValidationUtil.formatAmount(customer.getTotalBalance()));
+            System.out.println("  Balances: " + customer.getFormattedBalanceSummary());
         } else {
             ConsoleUI.printError("Customer not found.");
         }

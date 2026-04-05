@@ -25,8 +25,8 @@ public class CheckingAccount extends Account {
 
     /** Annual interest rate for checking accounts */
     private static final double ANNUAL_INTEREST_RATE = 0.005;       // 0.5%
-    /** Maximum overdraft amount allowed */
-    private static final double OVERDRAFT_LIMIT = 1000.0;
+    /** Maximum overdraft amount allowed (about $300 in LKR) */
+    private static final double OVERDRAFT_LIMIT = 100000.0;
     /** Interest rate charged on overdraft amount */
     private static final double OVERDRAFT_INTEREST_RATE = 0.15;     // 15%
 

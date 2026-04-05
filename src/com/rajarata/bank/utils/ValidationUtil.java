@@ -41,14 +41,14 @@ public final class ValidationUtil {
     private static final Pattern GOVT_ID_PATTERN = 
         Pattern.compile("^[A-Za-z0-9]{5,20}$");
 
-    /** Minimum deposit amount in dollars */
-    public static final double MIN_DEPOSIT_AMOUNT = 10.0;
+    /** Minimum deposit amount (default currency) */
+    public static final double MIN_DEPOSIT_AMOUNT = 500.0;
 
-    /** Maximum transaction amount for fraud detection threshold */
-    public static final double LARGE_TRANSACTION_THRESHOLD = 5000.0;
+    /** Maximum transaction amount for fraud detection threshold (about $10,000 in LKR) */
+    public static final double LARGE_TRANSACTION_THRESHOLD = 1000000.0;
 
-    /** Maximum single withdrawal amount for fraud detection */
-    public static final double FRAUD_WITHDRAWAL_THRESHOLD = 10000.0;
+    /** Maximum single withdrawal amount before alert (about $30,000 in LKR) */
+    public static final double FRAUD_WITHDRAWAL_THRESHOLD = 3000000.0;
 
     /**
      * Private constructor to prevent instantiation.

@@ -123,14 +123,14 @@ public class AccountFactory {
             case "savings":
                 return 500.0;
             case "checking":
-                return 10.0;
+                return 100.0;
             case "student":
-                return 10.0;
+                return 100.0;
             case "fixed deposit":
             case "fd":
                 return 5000.0;
             default:
-                return 10.0;
+                return 100.0;
         }
     }
 
@@ -144,19 +144,19 @@ public class AccountFactory {
         sb.append("║              AVAILABLE ACCOUNT TYPES                    ║\n");
         sb.append("╠══════════════════════════════════════════════════════════╣\n");
         sb.append("║  1. Savings Account                                    ║\n");
-        sb.append("║     • Interest: 3.5% p.a.  • Min Balance: $500        ║\n");
+        sb.append("║     • Interest: 3.5% p.a.  • Min Balance: 500 Units    ║\n");
         sb.append("║     • 5 withdrawals/month  • No overdraft             ║\n");
         sb.append("║                                                        ║\n");
         sb.append("║  2. Checking Account                                   ║\n");
         sb.append("║     • Interest: 0.5% p.a.  • No min balance           ║\n");
-        sb.append("║     • Unlimited withdrawals • $1000 overdraft          ║\n");
+        sb.append("║     • Unlimited withdrawals • 100,000 Units overdraft  ║\n");
         sb.append("║                                                        ║\n");
         sb.append("║  3. Student Account                                    ║\n");
         sb.append("║     • Interest: 2.0% p.a.  • No min balance           ║\n");
         sb.append("║     • 10 withdrawals/month • Ages 18-25 only          ║\n");
         sb.append("║                                                        ║\n");
         sb.append("║  4. Fixed Deposit Account                              ║\n");
-        sb.append("║     • Interest: 5.5% p.a.  • Min deposit: $5,000      ║\n");
+        sb.append("║     • Interest: 5.5% p.a.  • Min deposit: 5,000 Units  ║\n");
         sb.append("║     • Lock-in: 6/12/24/36 months                      ║\n");
         sb.append("║     • Early withdrawal: 2% penalty                    ║\n");
         sb.append("╚══════════════════════════════════════════════════════════╝\n");

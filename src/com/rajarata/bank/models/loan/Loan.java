@@ -1,5 +1,6 @@
 package com.rajarata.bank.models.loan;
 
+import com.rajarata.bank.utils.CurrencyUtil;
 import com.rajarata.bank.utils.DateUtil;
 import com.rajarata.bank.utils.ValidationUtil;
 
@@ -240,10 +241,11 @@ public class Loan {
         sb.append("╠══════════════════════════════════════════════════════════════════╣\n");
         sb.append(String.format("║ Loan ID     : %-49s ║\n", loanId));
         sb.append(String.format("║ Loan Type   : %-49s ║\n", loanType.getDisplayName()));
-        sb.append(String.format("║ Principal   : $%-48s ║\n", ValidationUtil.formatAmount(loanAmount)));
+        String sym = CurrencyUtil.getCurrencySymbol(null);
+        sb.append(String.format("║ Principal   : %s%-48s ║\n", sym, ValidationUtil.formatAmount(loanAmount)));
         sb.append(String.format("║ Rate (APR)  : %-49s ║\n", String.format("%.1f%%", interestRate * 100)));
         sb.append(String.format("║ Term        : %-49s ║\n", termMonths + " months"));
-        sb.append(String.format("║ EMI         : $%-48s ║\n", ValidationUtil.formatAmount(monthlyInstallment)));
+        sb.append(String.format("║ EMI         : %s%-48s ║\n", sym, ValidationUtil.formatAmount(monthlyInstallment)));
         sb.append("╠══════════════════════════════════════════════════════════════════╣\n");
         sb.append("║  Month │    Payment    │  Principal   │  Interest   │  Balance   ║\n");
         sb.append("╠════════╪═══════════════╪══════════════╪═════════════╪════════════╣\n");
@@ -264,16 +266,16 @@ public class Loan {
 
             sb.append(String.format("║  %4d  │ %13s │ %12s │ %11s │ %10s ║\n",
                     month,
-                    "$" + ValidationUtil.formatAmount(monthlyInstallment),
-                    "$" + ValidationUtil.formatAmount(principalPortion),
-                    "$" + ValidationUtil.formatAmount(interestPortion),
-                    "$" + ValidationUtil.formatAmount(balance)));
+                    sym + ValidationUtil.formatAmount(monthlyInstallment),
+                    sym + ValidationUtil.formatAmount(principalPortion),
+                    sym + ValidationUtil.formatAmount(interestPortion),
+                    sym + ValidationUtil.formatAmount(balance)));
         }
 
         sb.append("╠══════════════════════════════════════════════════════════════════╣\n");
-        sb.append(String.format("║ Total Payment  : $%-44s ║\n",
+        sb.append(String.format("║ Total Payment  : %s%-44s ║\n", sym,
                 ValidationUtil.formatAmount(monthlyInstallment * termMonths)));
-        sb.append(String.format("║ Total Interest : $%-44s ║\n",
+        sb.append(String.format("║ Total Interest : %s%-44s ║\n", sym,
                 ValidationUtil.formatAmount(totalInterest)));
         sb.append("╚══════════════════════════════════════════════════════════════════╝\n");
 
@@ -286,10 +288,13 @@ public class Loan {
      */
     public String getLoanSummary() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("  %-12s | %-14s | $%12s | $%12s | %-10s",
+        String sym = CurrencyUtil.getCurrencySymbol(null);
+        sb.append(String.format("  %-12s | %-14s | %s%12s | %s%12s | %-10s",
                 loanId,
                 loanType.getDisplayName(),
+                sym,
                 ValidationUtil.formatAmount(loanAmount),
+                sym,
                 ValidationUtil.formatAmount(remainingBalance),
                 status.getDisplayName()));
         return sb.toString();

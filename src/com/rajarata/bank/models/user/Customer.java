@@ -180,15 +180,50 @@ public class Customer extends User {
     }
 
     /**
-     * Gets the total balance across all active accounts.
-     * @return Combined balance of all accounts
+     * Gets total balances grouped by currency for all active accounts.
+     * @return Map of currency code to total balance in that currency
+     */
+    public java.util.Map<String, Double> getBalanceByCurrency() {
+        java.util.Map<String, Double> balances = new java.util.LinkedHashMap<>();
+        if (accounts == null) return balances;
+        for (Account acc : accounts) {
+            if ("Active".equals(acc.getStatus())) {
+                balances.merge(acc.getCurrency(), acc.getBalance(), Double::sum);
+            }
+        }
+        return balances;
+    }
+
+    /**
+     * Gets a formatted string showing balance per currency.
+     * @return e.g. "LKR 25,000.00 | USD 1,500.00"
+     */
+    public String getFormattedBalanceSummary() {
+        java.util.Map<String, Double> balances = getBalanceByCurrency();
+        if (balances.isEmpty()) return "No active accounts";
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (java.util.Map.Entry<String, Double> entry : balances.entrySet()) {
+            if (!first) sb.append(" | ");
+            sb.append(entry.getKey()).append(" ").append(String.format("%,.2f", entry.getValue()));
+            first = false;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Gets the total balance across all active accounts (same-currency sum only for LKR).
+     * For backward compatibility — returns the LKR balance or total if single currency.
+     * @return Combined balance of LKR accounts, or all if single currency
      */
     public double getTotalBalance() {
         if (accounts == null) return 0.0;
-        return accounts.stream()
-                .filter(a -> "Active".equals(a.getStatus()))
-                .mapToDouble(Account::getBalance)
-                .sum();
+        java.util.Map<String, Double> balances = getBalanceByCurrency();
+        if (balances.size() <= 1) {
+            return balances.values().stream().mapToDouble(Double::doubleValue).sum();
+        }
+        // If multi-currency, return LKR balance (default currency)
+        return balances.getOrDefault("LKR", 0.0);
     }
 
     /**
@@ -197,25 +232,32 @@ public class Customer extends User {
      */
     public String getAccountsSummary() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n┌──────────────────┬──────────────────┬────────────────┬──────────┐\n");
-        sb.append(String.format("│ %-16s │ %-16s │ %-14s │ %-8s │\n",
-                "Account Number", "Type", "Balance ($)", "Status"));
-        sb.append("├──────────────────┼──────────────────┼────────────────┼──────────┤\n");
+        sb.append("\n┌──────────────────┬──────────────────┬──────┬────────────────┬──────────┐\n");
+        sb.append(String.format("│ %-16s │ %-16s │ %-4s │ %-14s │ %-8s │\n",
+                "Account Number", "Type", "Cur.", "Balance", "Status"));
+        sb.append("├──────────────────┼──────────────────┼──────┼────────────────┼──────────┤\n");
 
         if (accounts != null && !accounts.isEmpty()) {
             for (Account acc : accounts) {
                 String primary = acc.getAccountNumber().equals(primaryAccountNumber) ? " *" : "";
-                sb.append(String.format("│ %-16s │ %-16s │ %,14.2f │ %-8s │\n",
+                sb.append(String.format("│ %-16s │ %-16s │ %-4s │ %,14.2f │ %-8s │\n",
                         acc.getAccountNumber() + primary,
                         acc.getAccountType(),
+                        acc.getCurrency(),
                         acc.getBalance(),
                         acc.getStatus()));
             }
+            // Per-currency subtotals
+            sb.append("├──────────────────┴──────────────────┴──────┴────────────────┴──────────┤\n");
+            java.util.Map<String, Double> totals = getBalanceByCurrency();
+            for (java.util.Map.Entry<String, Double> entry : totals.entrySet()) {
+                sb.append(String.format("│   Total %-4s Balance: %,47.2f │\n", entry.getKey(), entry.getValue()));
+            }
         } else {
-            sb.append("│                    No accounts found                         │\n");
+            sb.append("│                       No accounts found                              │\n");
         }
 
-        sb.append("└──────────────────┴──────────────────┴────────────────┴──────────┘\n");
+        sb.append("└──────────────────────────────────────────────────────────────────────┘\n");
         sb.append("  * = Primary Account\n");
         return sb.toString();
     }

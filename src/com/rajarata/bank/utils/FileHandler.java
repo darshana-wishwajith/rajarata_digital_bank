@@ -14,7 +14,8 @@ import java.util.List;
  * BufferedWriter, and PrintWriter for data persistence.
  * 
  * OOP Concept: Encapsulation - All file paths and I/O logic are encapsulated
- * within this class. Other classes interact with data through this interface only.
+ * within this class. Other classes interact with data through this interface
+ * only.
  * 
  * OOP Concept: Static Members - File paths are defined as static constants,
  * methods are static for stateless access.
@@ -60,7 +61,8 @@ public final class FileHandler {
     }
 
     /**
-     * Initializes the data directory and creates necessary files if they don't exist.
+     * Initializes the data directory and creates necessary files if they don't
+     * exist.
      * Should be called at application startup.
      */
     public static void initializeDataFiles() {
@@ -70,10 +72,10 @@ public final class FileHandler {
 
             // Create each data file if it doesn't exist
             String[] files = {
-                CUSTOMERS_FILE, ACCOUNTS_FILE, TRANSACTIONS_FILE,
-                LOANS_FILE, NOTIFICATIONS_FILE, PAYEES_FILE,
-                SCHEDULED_PAYMENTS_FILE, EXCHANGE_RATES_FILE,
-                FRAUD_CASES_FILE, AUDIT_LOG_FILE
+                    CUSTOMERS_FILE, ACCOUNTS_FILE, TRANSACTIONS_FILE,
+                    LOANS_FILE, NOTIFICATIONS_FILE, PAYEES_FILE,
+                    SCHEDULED_PAYMENTS_FILE, EXCHANGE_RATES_FILE,
+                    FRAUD_CASES_FILE, AUDIT_LOG_FILE
             };
 
             for (String filePath : files) {
@@ -126,7 +128,7 @@ public final class FileHandler {
      * Creates a backup of the existing file before writing.
      * 
      * @param filePath The path to the data file
-     * @param lines List of strings to write, one per line
+     * @param lines    List of strings to write, one per line
      */
     public static void writeAllLines(String filePath, List<String> lines) {
         try {
@@ -149,7 +151,7 @@ public final class FileHandler {
      * without rewriting the entire file.
      * 
      * @param filePath The path to the data file
-     * @param line The line to append
+     * @param line     The line to append
      */
     public static void appendLine(String filePath, String line) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
@@ -164,7 +166,7 @@ public final class FileHandler {
      * Appends an audit log entry with timestamp. Audit log is append-only.
      * Format: [timestamp] | action | details
      * 
-     * @param action The action being logged (e.g., "LOGIN", "DEPOSIT")
+     * @param action  The action being logged (e.g., "LOGIN", "DEPOSIT")
      * @param details The details of the action
      */
     public static void logAudit(String action, String details) {
@@ -178,8 +180,8 @@ public final class FileHandler {
      * Searches for a line starting with the key and replaces it with the new data.
      * 
      * @param filePath The path to the data file
-     * @param key The key to search for (typically the first field)
-     * @param newLine The replacement line
+     * @param key      The key to search for (typically the first field)
+     * @param newLine  The replacement line
      * @return true if the line was found and replaced
      */
     public static boolean updateLine(String filePath, String key, String newLine) {
@@ -204,7 +206,7 @@ public final class FileHandler {
      * Deletes a line from a file identified by a key field.
      * 
      * @param filePath The path to the data file
-     * @param key The key identifying the line to delete
+     * @param key      The key identifying the line to delete
      * @return true if the line was found and deleted
      */
     public static boolean deleteLine(String filePath, String key) {
@@ -220,7 +222,7 @@ public final class FileHandler {
     /**
      * Finds all lines matching a key in any field position.
      * 
-     * @param filePath The path to the data file
+     * @param filePath    The path to the data file
      * @param searchValue The value to search for
      * @return List of matching lines
      */
@@ -259,8 +261,8 @@ public final class FileHandler {
      * Exports data to a CSV file format for external use.
      * 
      * @param outputPath The path for the output CSV file
-     * @param headers CSV header row
-     * @param data List of data rows
+     * @param headers    CSV header row
+     * @param data       List of data rows
      */
     public static void exportToCsv(String outputPath, String headers, List<String> data) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(outputPath))) {
@@ -279,7 +281,7 @@ public final class FileHandler {
      * Generates a formatted text statement file.
      * 
      * @param outputPath The path for the output file
-     * @param content The formatted statement content
+     * @param content    The formatted statement content
      */
     public static void writeStatement(String outputPath, String content) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(outputPath))) {
@@ -296,15 +298,16 @@ public final class FileHandler {
      */
     private static void initializeExchangeRates() {
         List<String> rates = new ArrayList<>();
-        rates.add("USD" + DELIMITER + "1.0000");
-        rates.add("EUR" + DELIMITER + "0.9200");
-        rates.add("GBP" + DELIMITER + "0.7900");
-        rates.add("LKR" + DELIMITER + "320.5000");
+        rates.add("USD" + DELIMITER + "1.00");
+        rates.add("EUR" + DELIMITER + "0.92");
+        rates.add("GBP" + DELIMITER + "0.79");
+        rates.add("LKR" + DELIMITER + "320.50");
         writeAllLines(EXCHANGE_RATES_FILE, rates);
     }
 
     /**
      * Checks if the data directory and files exist and are accessible.
+     * 
      * @return true if data infrastructure is healthy
      */
     public static boolean isDataHealthy() {
@@ -318,6 +321,7 @@ public final class FileHandler {
 
     /**
      * Gets the total number of records in a data file.
+     * 
      * @param filePath Path to the data file
      * @return Number of non-empty lines in the file
      */

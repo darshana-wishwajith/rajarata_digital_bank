@@ -1,0 +1,20 @@
+# Exclude Compiled folders
+out/
+bin/
+
+# Exclude IDE settings (IntelliJ)
+.idea/
+*.iml
+
+# Exclude OS-specific files
+.DS_Store
+Thumbs.db
+
+# Exclude Large ZIP and Backup files
+*.zip
+data/*.bak
+
+# Exclude documentation files
+docs/
+project_analysis.md
+project_status.md

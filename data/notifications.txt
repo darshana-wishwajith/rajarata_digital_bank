@@ -1,0 +1,2 @@
+NOTIF-000001|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|$1,000.00 deposited to RDB1001-0002. New balance: $6,000.00|2026-04-05 11:13:55|false
+NOTIF-000002|CUST-1001|TRANSACTION_FAILED|Withdrawal Failed|Failed to withdraw $70,000.00 from RDB1001-0002. Reason: Insufficient funds for withdrawal|2026-04-05 11:14:48|false

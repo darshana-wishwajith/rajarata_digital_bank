@@ -1,0 +1,472 @@
+/* ============================================================
+ *  Rajarata Digital Bank — JavaFX Theme
+ *  Color Palette: White, Gray, Light Blue
+ * ============================================================ */
+
+/* ---------- ROOT VARIABLES ---------- */
+.root {
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: #F5F7FA;
+
+    /* Custom color tokens */
+    -rdb-primary: #4A90D9;
+    -rdb-primary-dark: #3574B5;
+    -rdb-primary-light: #D6E8F7;
+    -rdb-accent: #5BA3E6;
+    -rdb-bg: #F5F7FA;
+    -rdb-card: #FFFFFF;
+    -rdb-text: #2C3E50;
+    -rdb-text-secondary: #7F8C8D;
+    -rdb-border: #D5DDE5;
+    -rdb-success: #27AE60;
+    -rdb-error: #E74C3C;
+    -rdb-warning: #F39C12;
+    -rdb-gray-light: #ECF0F3;
+    -rdb-gray: #BDC3C7;
+    -rdb-shadow: #00000015;
+}
+
+/* ---------- COMMON LAYOUT ---------- */
+.main-container {
+    -fx-background-color: -rdb-bg;
+    -fx-padding: 0;
+}
+
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #3B7DD8, #2C5F9E);
+    -fx-padding: 0;
+    -fx-min-width: 250;
+    -fx-max-width: 250;
+}
+
+.sidebar-header {
+    -fx-padding: 30 20 20 20;
+    -fx-alignment: center;
+}
+
+.sidebar-bank-name {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-subtitle {
+    -fx-text-fill: #FFFFFFBB;
+    -fx-font-size: 11px;
+}
+
+.sidebar-user-info {
+    -fx-padding: 15 20;
+    -fx-background-color: #FFFFFF15;
+}
+
+.sidebar-username {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-role {
+    -fx-text-fill: #FFFFFFAA;
+    -fx-font-size: 11px;
+}
+
+/* ---------- SIDEBAR BUTTONS ---------- */
+.sidebar-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFFCC;
+    -fx-font-size: 13px;
+    -fx-padding: 12 20;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+    -fx-max-width: infinity;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+}
+
+.sidebar-btn:hover {
+    -fx-background-color: #FFFFFF20;
+    -fx-text-fill: white;
+}
+
+.sidebar-btn-active {
+    -fx-background-color: #FFFFFF25;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-width: 0 0 0 4;
+    -fx-border-color: white;
+}
+
+.sidebar-logout-btn {
+    -fx-background-color: #FFFFFF15;
+    -fx-text-fill: #FF6B6B;
+    -fx-font-size: 13px;
+    -fx-padding: 12 20;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+    -fx-max-width: infinity;
+    -fx-background-radius: 0;
+}
+
+.sidebar-logout-btn:hover {
+    -fx-background-color: #FF6B6B30;
+    -fx-text-fill: #FF4444;
+}
+
+/* ---------- CONTENT AREA ---------- */
+.content-area {
+    -fx-background-color: -rdb-bg;
+    -fx-padding: 30;
+}
+
+.page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -rdb-text;
+}
+
+.page-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: -rdb-text-secondary;
+}
+
+/* ---------- CARDS ---------- */
+.card {
+    -fx-background-color: -rdb-card;
+    -fx-background-radius: 12;
+    -fx-padding: 24;
+    -fx-effect: dropshadow(gaussian, -rdb-shadow, 8, 0, 0, 2);
+}
+
+.card-header {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -rdb-text;
+}
+
+.stat-card {
+    -fx-background-color: -rdb-card;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, -rdb-shadow, 6, 0, 0, 2);
+    -fx-min-width: 180;
+}
+
+.stat-card-blue {
+    -fx-background-color: linear-gradient(to bottom right, #4A90D9, #3574B5);
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, #4A90D940, 8, 0, 0, 2);
+}
+
+.stat-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -rdb-text;
+}
+
+.stat-value-white {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.stat-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: -rdb-text-secondary;
+}
+
+.stat-label-white {
+    -fx-font-size: 12px;
+    -fx-text-fill: #FFFFFFBB;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn-primary {
+    -fx-background-color: -rdb-primary;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 28;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.btn-primary:hover {
+    -fx-background-color: -rdb-primary-dark;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #2A5F8F;
+}
+
+.btn-secondary {
+    -fx-background-color: -rdb-gray-light;
+    -fx-text-fill: -rdb-text;
+    -fx-font-size: 13px;
+    -fx-padding: 8 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: -rdb-border;
+}
+
+.btn-success {
+    -fx-background-color: -rdb-success;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 8 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-success:hover {
+    -fx-background-color: #219A52;
+}
+
+.btn-danger {
+    -fx-background-color: -rdb-error;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 8 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #C0392B;
+}
+
+.btn-action {
+    -fx-background-color: -rdb-primary-light;
+    -fx-text-fill: -rdb-primary;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-min-width: 160;
+    -fx-alignment: center;
+}
+
+.btn-action:hover {
+    -fx-background-color: -rdb-primary;
+    -fx-text-fill: white;
+}
+
+/* ---------- TEXT FIELDS ---------- */
+.text-field, .password-field {
+    -fx-background-color: -rdb-card;
+    -fx-border-color: -rdb-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 14;
+    -fx-font-size: 13px;
+    -fx-text-fill: -rdb-text;
+    -fx-prompt-text-fill: #B0B8C1;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: -rdb-primary;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, #4A90D930, 6, 0, 0, 0);
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5A6A7A;
+    -fx-padding: 0 0 4 2;
+}
+
+.field-error {
+    -fx-text-fill: -rdb-error;
+    -fx-font-size: 11px;
+    -fx-padding: 2 0 0 2;
+}
+
+/* ---------- TABLE VIEW ---------- */
+.table-view {
+    -fx-background-color: -rdb-card;
+    -fx-border-color: -rdb-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -rdb-gray-light;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -rdb-border transparent;
+    -fx-padding: 10;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -rdb-text-secondary;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: -rdb-card;
+    -fx-border-color: transparent transparent -rdb-gray-light transparent;
+    -fx-padding: 4;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: -rdb-primary-light;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: -rdb-text;
+    -fx-font-size: 13px;
+    -fx-padding: 8;
+}
+
+/* ---------- LOGIN / AUTH SCREENS ---------- */
+.auth-container {
+    -fx-background-color: linear-gradient(to bottom right, #E8F0FE, #F5F7FA);
+    -fx-alignment: center;
+}
+
+.auth-card {
+    -fx-background-color: -rdb-card;
+    -fx-background-radius: 16;
+    -fx-padding: 40;
+    -fx-effect: dropshadow(gaussian, #00000020, 20, 0, 0, 4);
+    -fx-min-width: 420;
+    -fx-max-width: 480;
+}
+
+.auth-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -rdb-primary;
+}
+
+.auth-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: -rdb-text-secondary;
+    -fx-padding: 0 0 10 0;
+}
+
+.auth-link {
+    -fx-text-fill: -rdb-primary;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-underline: true;
+}
+
+.auth-link:hover {
+    -fx-text-fill: -rdb-primary-dark;
+}
+
+/* ---------- ALERTS / BADGES ---------- */
+.alert-success {
+    -fx-background-color: #D4EDDA;
+    -fx-text-fill: #155724;
+    -fx-padding: 12 16;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+}
+
+.alert-error {
+    -fx-background-color: #F8D7DA;
+    -fx-text-fill: #721C24;
+    -fx-padding: 12 16;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+}
+
+.alert-info {
+    -fx-background-color: -rdb-primary-light;
+    -fx-text-fill: #1A5276;
+    -fx-padding: 12 16;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+}
+
+.badge {
+    -fx-background-color: -rdb-error;
+    -fx-text-fill: white;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 6;
+    -fx-background-radius: 10;
+    -fx-min-width: 18;
+    -fx-alignment: center;
+}
+
+.badge-blue {
+    -fx-background-color: -rdb-primary;
+    -fx-text-fill: white;
+    -fx-font-size: 10px;
+    -fx-padding: 2 6;
+    -fx-background-radius: 10;
+}
+
+.status-active {
+    -fx-text-fill: -rdb-success;
+    -fx-font-weight: bold;
+}
+
+.status-suspended {
+    -fx-text-fill: -rdb-warning;
+    -fx-font-weight: bold;
+}
+
+.status-closed {
+    -fx-text-fill: -rdb-error;
+    -fx-font-weight: bold;
+}
+
+/* ---------- SCROLL PANE ---------- */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -rdb-gray;
+    -fx-background-radius: 4;
+}
+
+/* ---------- COMBO BOX ---------- */
+.combo-box {
+    -fx-background-color: -rdb-card;
+    -fx-border-color: -rdb-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 6 10;
+}
+
+/* ---------- SEPARATOR ---------- */
+.separator .line {
+    -fx-border-color: -rdb-gray-light;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ---------- DIALOG ---------- */
+.dialog-pane {
+    -fx-background-color: -rdb-card;
+    -fx-padding: 20;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -rdb-primary-light;
+}

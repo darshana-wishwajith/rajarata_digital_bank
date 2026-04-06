@@ -1,199 +1,258 @@
-[2026-03-21 14:13:48] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 14:14:28] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 14:20:38] | LOGOUT | User logged out: ADMIN-11
-[2026-03-21 14:23:28] | LOGIN_FAILED | Unknown email: tharindu@gmail.com
-[2026-03-21 14:24:05] | LOGIN_FAILED | Unknown email: tharindu@gmail.com
-[2026-03-21 14:33:46] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 14:33:52] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 14:48:56] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 14:48:58] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 14:51:01] | REGISTRATION | New customer registered: CUST-1001 (user1234@gmail.com)
-[2026-03-21 14:51:18] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-03-21 14:51:41] | LOGOUT | User logged out: CUST-1001
-[2026-03-21 15:10:26] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 15:12:03] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-03-21 15:15:35] | LOGOUT | User logged out: CUST-1001
-[2026-03-21 15:15:58] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 15:16:39] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 15:17:03] | LOGIN_FAILED | Invalid password for: user1234@gmail.com (Attempts remaining: 2)
-[2026-03-21 15:17:12] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-03-21 15:17:55] | ACCOUNT_OPENED | Account RDB1001-0002 (Savings) opened for CUST-1001 with initial deposit $5,000.00
-[2026-03-21 15:19:07] | LOGOUT | User logged out: CUST-1001
-[2026-03-21 15:19:49] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 15:24:41] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 15:29:05] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 15:29:27] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-03-21 15:30:47] | LOGOUT | User logged out: CUST-1001
-[2026-03-21 15:31:13] | LOGIN_FAILED | Unknown email: admin@rajarata,com
-[2026-03-21 15:31:23] | LOGIN_FAILED | Unknown email: admin@rajarata,com
-[2026-03-21 15:31:48] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 15:38:25] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 15:46:14] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 15:46:41] | LOGIN_LOCKED | Attempt on locked account: admin@rajarata.com
-[2026-03-21 15:46:48] | LOGIN_LOCKED | Attempt on locked account: admin@rajarata.com
-[2026-03-21 15:46:50] | LOGIN_LOCKED | Attempt on locked account: admin@rajarata.com
-[2026-03-21 15:47:40] | LOGIN_LOCKED | Attempt on locked account: admin@rajarata.com
-[2026-03-21 15:47:41] | LOGIN_LOCKED | Attempt on locked account: admin@rajarata.com
-[2026-03-21 15:47:42] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 15:47:57] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 15:48:40] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 15:49:43] | LOGOUT | User logged out: ADMIN-11
-[2026-03-21 15:55:29] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 15:57:18] | STAFF_CREATION | New staff created: STAFF-101 by ADMIN-11
-[2026-03-21 16:24:21] | LOGOUT | User logged out: ADMIN-11
-[2026-03-21 16:24:39] | LOGIN_SUCCESS | User logged in: STAFF-101 (staff@rajarata.com) Role: Staff
-[2026-03-21 16:39:34] | LOGOUT | User logged out: STAFF-101
-[2026-03-21 16:39:53] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 16:40:09] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 16:43:47] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 16:44:09] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 16:46:28] | LOGOUT | User logged out: ADMIN-11
-[2026-03-21 16:46:42] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 16:46:46] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 16:49:32] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 16:50:06] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-03-21 16:50:46] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 16:52:27] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 16:52:43] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 17:20:46] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 17:22:29] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 17:23:23] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 17:30:11] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 17:31:09] | LOGIN_SUCCESS | User logged in: ADMIN-12 (superadmin@rajarata.com) Role: Administrator
-[2026-03-21 17:31:25] | LOGOUT | User logged out: ADMIN-12
-[2026-03-21 17:31:46] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 17:32:02] | LOGOUT | User logged out: ADMIN-11
-[2026-03-21 17:32:21] | LOGIN_SUCCESS | User logged in: ADMIN-13 (basicadmin@rajarata.com) Role: Administrator
-[2026-03-21 17:32:27] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 17:41:23] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 17:41:42] | LOGIN_SUCCESS | User logged in: ADMIN-12 (superadmin@rajarata.com) Role: Administrator
-[2026-03-21 17:42:26] | LOGOUT | User logged out: ADMIN-12
-[2026-03-21 17:42:28] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-03-21 17:42:35] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-03-21 17:43:00] | LOGIN_FAILED | Invalid password for: admin@rajarata.com (Attempts remaining: 2)
-[2026-03-21 17:43:04] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-03-21 17:43:19] | LOGOUT | User logged out: ADMIN-11
-[2026-03-21 17:43:36] | LOGIN_SUCCESS | User logged in: ADMIN-12 (superadmin@rajarata.com) Role: Administrator
-[2026-03-21 17:45:13] | ACCOUNT_LOCK | Account locked: ADMIN-11 by ADMIN-12
-[2026-03-21 17:45:16] | ACCOUNT_UNLOCK | Account unlocked: ADMIN-11 by ADMIN-12
-[2026-03-21 17:45:19] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 10:59:15] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 11:00:06] | LOGIN_SUCCESS | User logged in: ADMIN-12 (superadmin@rajarata.com) Role: Administrator
-[2026-04-05 11:03:14] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 11:03:44] | LOGIN_SUCCESS | User logged in: ADMIN-12 (superadmin@rajarata.com) Role: Administrator
-[2026-04-05 11:06:12] | LOGOUT | User logged out: ADMIN-12
-[2026-04-05 11:06:48] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-04-05 11:07:13] | LOGOUT | User logged out: ADMIN-11
-[2026-04-05 11:07:48] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 11:08:06] | LOGIN_SUCCESS | User logged in: ADMIN-13 (basicadmin@rajarata.com) Role: Administrator
-[2026-04-05 11:08:15] | LOGOUT | User logged out: ADMIN-13
-[2026-04-05 11:08:53] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-04-05 11:09:01] | LOGOUT | User logged out: ADMIN-11
-[2026-04-05 11:09:21] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-04-05 11:13:55] | DEPOSIT | Deposit $1,000.00 to RDB1001-0002
-[2026-04-05 11:14:48] | WITHDRAWAL_FAILED | Failed withdrawal from RDB1001-0002: Insufficient funds for withdrawal
-[2026-04-05 11:17:17] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 11:33:31] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 11:33:47] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 11:34:58] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-04-05 11:36:50] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 11:37:12] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 11:37:43] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-04-05 11:38:36] | LOGOUT | User logged out: ADMIN-11
-[2026-04-05 11:38:50] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 18:43:46] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 18:44:15] | LOGIN_FAILED | Invalid password for: admin@rajarata.com (Attempts remaining: 2)
-[2026-04-05 18:44:23] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-04-05 18:46:08] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 18:46:22] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 18:46:39] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-04-05 18:46:56] | RATE_UPDATE | Exchange rate updated: LKR = 1.0
-[2026-04-05 18:47:10] | RATE_UPDATE | Exchange rate updated: LKR = 300.0
-[2026-04-05 18:48:14] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 18:48:24] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 18:48:53] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-04-05 18:49:00] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 21:59:13] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 21:59:56] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 22:01:10] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 22:01:52] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 22:02:10] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-04-05 22:03:27] | WITHDRAWAL | Withdrawal $100.00 from RDB1001-0002
-[2026-04-05 22:03:56] | WITHDRAWAL | Withdrawal $250.00 from RDB1001-0002
-[2026-04-05 22:04:11] | DEPOSIT | Deposit $2,000.00 to RDB1001-0002
-[2026-04-05 22:05:41] | DEPOSIT | Deposit $100.00 to RDB1001-0002
-[2026-04-05 22:05:48] | WITHDRAWAL | Withdrawal $100.00 from RDB1001-0002
-[2026-04-05 22:07:24] | BILL_PAYMENT | Bill payment $100.00 to National Power Company from RDB1001-0002
-[2026-04-05 22:08:16] | BILL_PAYMENT | Bill payment $100.00 to Municipal Water Board from RDB1001-0002
-[2026-04-05 22:11:19] | LOGOUT | User logged out: CUST-1001
-[2026-04-05 22:11:44] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-04-05 22:12:25] | ACCOUNT_OPENED | Account RDB1001-0016 (Fixed Deposit) opened for CUST-1001 with initial deposit $10,000.00
-[2026-04-05 22:12:54] | WITHDRAWAL | Withdrawal $100.00 from RDB1001-0016
-[2026-04-05 22:13:58] | LOGOUT | User logged out: CUST-1001
-[2026-04-05 22:14:40] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-04-05 22:15:16] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 22:15:24] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 22:15:57] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 22:16:25] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 22:16:36] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-04-05 22:18:48] | LOGOUT | User logged out: CUST-1001
-[2026-04-05 22:23:40] | REGISTRATION | New customer registered: CUST-1002 (testuser@gmail.com)
-[2026-04-05 22:26:36] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
-[2026-04-05 22:29:01] | ACCOUNT_OPENED | Account RDB1002-0017 (Savings) opened for CUST-1002 with initial deposit $1,000.00
-[2026-04-05 22:30:29] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 22:30:51] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 22:31:13] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
-[2026-04-05 22:31:24] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
-[2026-04-05 22:32:05] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 22:32:25] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 22:32:51] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
-[2026-04-05 22:33:57] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 22:34:09] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 22:34:32] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
-[2026-04-05 22:34:41] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 1)
-[2026-04-05 22:34:43] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 0)
-[2026-04-05 22:34:43] | SECURITY_LOCKOUT | Account locked after 3 failed attempts: testuser@gmail.com
-[2026-04-05 22:34:43] | FRAUD_DETECTED | Case FRAUD-000001: Account locked after 3 consecutive failed login attempts from email: testuser@gmail.com | Customer: CUST-1002 | Pattern: REPEATED_LOGIN_FAILURE
-[2026-04-05 22:34:45] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:34:45] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:34:45] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:34:46] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:36:10] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:36:11] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:36:12] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:36:12] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:36:12] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
-[2026-04-05 22:38:02] | PASSWORD_RECOVERY | Password recovered for: CUST-1002
-[2026-04-05 22:38:31] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
-[2026-04-05 22:39:44] | LOAN_APPLICATION | Loan application LOAN-000001 submitted by CUST-1002 - Personal Loan $10,000.00
-[2026-04-05 22:40:43] | ACCOUNT_OPENED | Account RDB1002-0018 (Savings) opened for CUST-1002 with initial deposit $2,000.00
-[2026-04-05 22:41:57] | TRANSFER | Transfer $500.00 USD from RDB1002-0018 to RDB1002-0017
-[2026-04-05 22:43:30] | LOGOUT | User logged out: CUST-1002
-[2026-04-05 22:43:46] | LOGIN_SUCCESS | User logged in: ADMIN-11 (admin@rajarata.com) Role: Administrator
-[2026-04-05 22:45:29] | FRAUD_CASE_UPDATE | Case FRAUD-000001 updated to: Resolved
-[2026-04-05 22:46:29] | LOGOUT | User logged out: ADMIN-11
-[2026-04-05 22:47:24] | LOGIN_SUCCESS | User logged in: ADMIN-12 (superadmin@rajarata.com) Role: Administrator
-[2026-04-05 22:48:28] | RATE_UPDATE | Exchange rate updated: LKR = 302.0
-[2026-04-05 22:50:31] | STAFF_CREATION | New staff created: STAFF-102 by ADMIN-12
-[2026-04-05 22:50:39] | LOGOUT | User logged out: ADMIN-12
-[2026-04-05 22:51:01] | LOGIN_SUCCESS | User logged in: STAFF-102 (ts@gmail.com) Role: Staff
-[2026-04-05 22:52:02] | LOAN_APPROVED | Loan LOAN-000001 approved by STAFF-102 - $10,000.00
-[2026-04-05 22:52:21] | LOGOUT | User logged out: STAFF-102
-[2026-04-05 22:52:34] | LOGIN_SUCCESS | User logged in: CUST-1001 (user1234@gmail.com) Role: Customer
-[2026-04-05 22:52:51] | LOGOUT | User logged out: CUST-1001
-[2026-04-05 22:53:07] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
-[2026-04-05 23:10:25] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 23:10:40] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 23:11:08] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
-[2026-04-05 23:12:34] | ACCOUNT_OPENED | Account RDB1002-0019 (Savings) opened for CUST-1002 with initial deposit $500.00
-[2026-04-05 23:12:58] | DEPOSIT | Deposit $500.00 to RDB1002-0019
-[2026-04-05 23:31:24] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
-[2026-04-05 23:41:29] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 23:41:56] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser@gmail.com) Role: Customer
-[2026-04-05 23:47:55] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
-[2026-04-05 23:48:04] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 09:09:10] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 09:09:39] | LOGIN_SUCCESS | User logged in: ADMIN-11 (superadmin@rajarata.com) Role: Administrator
+[2026-04-06 09:10:17] | LOGOUT | User logged out: ADMIN-11
+[2026-04-06 09:17:12] | REGISTRATION | New customer registered: CUST-1001 (testuser@gmail.com)
+[2026-04-06 09:17:54] | LOGIN_FAILED | Unknown email: testuser@gmil.com
+[2026-04-06 09:18:18] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
+[2026-04-06 09:19:53] | PASSWORD_RECOVERY | Password recovered for: CUST-1001
+[2026-04-06 09:20:30] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 09:24:16] | ACCOUNT_OPENED | Account RDB1001-0001 (Savings) opened for CUST-1001 with initial deposit $25,000.00
+[2026-04-06 09:25:08] | ACCOUNT_OPENED | Account RDB1001-0002 (Student) opened for CUST-1001 with initial deposit $1,000.00
+[2026-04-06 09:27:30] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 09:27:48] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 09:28:29] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 09:31:51] | DEPOSIT | Deposit $2,500.00 to RDB1001-0002
+[2026-04-06 09:32:33] | DEPOSIT | Deposit $5,000.00 to RDB1001-0001
+[2026-04-06 09:33:20] | WITHDRAWAL | Withdrawal LKR 500.00 from RDB1001-0002
+[2026-04-06 09:33:49] | WITHDRAWAL | Withdrawal LKR 3,000.00 from RDB1001-0001
+[2026-04-06 09:34:52] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Insufficient funds for withdrawal
+[2026-04-06 09:35:10] | TRANSFER | Transfer LKR 7,000.00 from RDB1001-0001 to RDB1001-0002
+[2026-04-06 09:36:38] | ACCOUNT_OPENED | Account RDB1001-0003 (Fixed Deposit) opened for CUST-1001 with initial deposit $5,000.00
+[2026-04-06 09:45:02] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 09:47:04] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 09:47:27] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 09:54:20] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 09:54:35] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 09:54:54] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 10:10:23] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 10:10:44] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 10:11:02] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 10:13:00] | DEPOSIT | Deposit $5,000.00 to RDB1001-0001
+[2026-04-06 10:25:32] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 10:25:49] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 10:26:31] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 11:08:43] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 11:09:00] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 11:09:14] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
+[2026-04-06 11:09:18] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 11:17:33] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 11:17:46] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 11:19:45] | TRANSFER | Transfer USD 100.00 from RDB1001-0003 to RDB1001-0001 (converted to 31,889.75 LKR, fee: 160.25 LKR)
+[2026-04-06 11:21:36] | WITHDRAWAL | Withdrawal LKR 6,000.00 from RDB1001-0001
+[2026-04-06 11:22:12] | DEPOSIT | Deposit LKR 111.25 into RDB1001-0001
+[2026-04-06 11:32:14] | LOGOUT | User logged out: CUST-1001
+[2026-04-06 11:34:08] | REGISTRATION | New customer registered: CUST-1002 (testuser2@gmail.com)
+[2026-04-06 11:34:29] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser2@gmail.com) Role: Customer
+[2026-04-06 11:34:40] | ACCOUNT_OPENED | Account RDB1002-0004 (Savings) opened for CUST-1002 with initial deposit $1,000.00
+[2026-04-06 11:35:52] | TRANSFER | Transfer LKR 500.00 from RDB1002-0004 to RDB1001-0001
+[2026-04-06 11:36:05] | LOGOUT | User logged out: CUST-1002
+[2026-04-06 11:36:25] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 11:37:21] | TRANSFER | Transfer LKR 5,000.00 from RDB1001-0001 to RDB1002-0004
+[2026-04-06 11:37:39] | LOGOUT | User logged out: CUST-1001
+[2026-04-06 11:38:10] | LOGIN_FAILED | Invalid password for: testuser2@gmail.com (Attempts remaining: 2)
+[2026-04-06 11:38:27] | LOGIN_FAILED | Invalid password for: testuser2@gmail.com (Attempts remaining: 1)
+[2026-04-06 11:38:51] | PASSWORD_RECOVERY | Password recovered for: CUST-1002
+[2026-04-06 11:39:10] | LOGIN_SUCCESS | User logged in: CUST-1002 (testuser2@gmail.com) Role: Customer
+[2026-04-06 11:40:06] | LOGOUT | User logged out: CUST-1002
+[2026-04-06 11:40:24] | LOGIN_SUCCESS | User logged in: ADMIN-12 (admin@rajarata.com) Role: Administrator
+[2026-04-06 11:40:56] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 11:41:19] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 11:42:18] | ACCOUNT_LOCK | Account locked: CUST-1001 by ADMIN-12
+[2026-04-06 11:42:30] | LOGOUT | User logged out: CUST-1001
+[2026-04-06 11:43:06] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 11:43:39] | WITHDRAWAL | Withdrawal LKR 6,501.00 from RDB1001-0001
+[2026-04-06 11:45:45] | STAFF_CREATION | New staff created: STAFF-101 by ADMIN-12
+[2026-04-06 11:46:14] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 11:46:59] | LOGIN_SUCCESS | User logged in: STAFF-101 (teststaff@gmail.com) Role: Staff
+[2026-04-06 11:49:00] | ACCOUNT_UNLOCK | Account unlocked: CUST-1002 by ADMIN-12
+[2026-04-06 11:49:16] | ACCOUNT_LOCK | Account locked: CUST-1001 by ADMIN-12
+[2026-04-06 11:49:31] | ACCOUNT_UNLOCK | Account unlocked: CUST-1001 by ADMIN-12
+[2026-04-06 11:50:42] | PASSWORD_RESET | Password reset for: CUST-1001 by ADMIN-12
+[2026-04-06 11:50:53] | LOGOUT | User logged out: CUST-1001
+[2026-04-06 11:51:11] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 11:51:17] | LOGOUT | User logged out: CUST-1001
+[2026-04-06 11:52:20] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
+[2026-04-06 11:52:31] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 11:53:06] | LOAN_APPLICATION | Loan application LOAN-000001 submitted by CUST-1001 - Education Loan $100,000.00
+[2026-04-06 11:53:24] | LOGOUT | User logged out: STAFF-101
+[2026-04-06 11:54:08] | LOGIN_SUCCESS | User logged in: STAFF-101 (teststaff@gmail.com) Role: Staff
+[2026-04-06 11:54:22] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 11:54:36] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 11:55:22] | LOGIN_SUCCESS | User logged in: STAFF-101 (teststaff@gmail.com) Role: Staff
+[2026-04-06 11:55:42] | LOAN_APPROVED | Loan LOAN-000001 approved by STAFF-101 - $100,000.00
+[2026-04-06 11:57:16] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 11:57:33] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 11:58:58] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 12:03:53] | ACCOUNT_SUSPENDED | Account suspended: RDB1001-0001
+[2026-04-06 12:04:14] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 12:04:29] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 12:04:55] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 12:42:38] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 12:42:45] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 12:42:48] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 12:43:05] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 12:43:18] | LOGIN_SUCCESS | User logged in: ADMIN-12 (admin@rajarata.com) Role: Administrator
+[2026-04-06 12:46:24] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 12:46:53] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 12:47:14] | LOGIN_SUCCESS | User logged in: ADMIN-12 (admin@rajarata.com) Role: Administrator
+[2026-04-06 12:50:48] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 12:51:06] | LOGIN_FAILED | Unknown email: teststaff@gmail.com
+[2026-04-06 12:51:13] | LOGIN_FAILED | Unknown email: teststaff@gmail.com
+[2026-04-06 12:51:14] | LOGIN_FAILED | Unknown email: teststaff@gmail.com
+[2026-04-06 12:51:14] | LOGIN_FAILED | Unknown email: teststaff@gmail.com
+[2026-04-06 12:51:25] | LOGIN_FAILED | Unknown email: teststaff@gmail.com
+[2026-04-06 12:51:39] | LOGIN_FAILED | Unknown email: teststaff@gmail.com
+[2026-04-06 12:51:39] | LOGIN_FAILED | Unknown email: teststaff@gmail.com
+[2026-04-06 12:51:39] | LOGIN_FAILED | Unknown email: teststaff@gmail.com
+[2026-04-06 12:51:40] | LOGIN_FAILED | Unknown email: teststaff@gmail.com
+[2026-04-06 14:06:24] | LOGIN_FAILED | Unknown email: admin@rajarata.com
+[2026-04-06 14:07:41] | LOGIN_FAILED | Unknown email: admin@rajarata.com
+[2026-04-06 14:07:42] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 14:07:47] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 14:08:06] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 14:08:29] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 14:11:37] | STAFF_CREATION | New staff created: STAFF-101 by ADMIN-02
+[2026-04-06 14:12:46] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 14:13:21] | LOGIN_FAILED | Invalid password for: teststaff@gmail.com (Attempts remaining: 2)
+[2026-04-06 14:13:31] | LOGIN_FAILED | Invalid password for: teststaff@gmail.com (Attempts remaining: 1)
+[2026-04-06 14:14:23] | PASSWORD_RECOVERY | Password recovered for: STAFF-101
+[2026-04-06 14:14:36] | LOGIN_SUCCESS | User logged in: STAFF-101 (teststaff@gmail.com) Role: Staff
+[2026-04-06 14:15:33] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 14:15:56] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 14:17:38] | LOAN_APPLICATION | Loan application LOAN-000002 submitted by CUST-1001 - Personal Loan $1,000,000.00
+[2026-04-06 14:19:09] | LOAN_APPROVED | Loan LOAN-000002 approved by STAFF-101 - $1,000,000.00
+[2026-04-06 14:40:52] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 14:40:53] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 14:40:54] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 14:43:53] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 14:43:59] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 14:47:13] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 14:47:44] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 14:49:41] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 14:50:08] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 14:52:10] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 14:52:37] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 14:53:17] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 14:56:34] | PASSWORD_RESET | Password reset for: CUST-1001 by ADMIN-02
+[2026-04-06 14:56:55] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 14:57:13] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 14:57:19] | LOGOUT | User logged out: CUST-1001
+[2026-04-06 14:57:40] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
+[2026-04-06 14:57:46] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 15:01:30] | ACCOUNT_LOCK | Account locked: CUST-1001 by ADMIN-02
+[2026-04-06 15:02:03] | DEPOSIT | Deposit LKR 1,000.00 into RDB1001-0002
+[2026-04-06 15:02:41] | ACCOUNT_SUSPENDED | Account suspended: RDB1001-0001
+[2026-04-06 15:03:39] | ACCOUNT_REACTIVATED | Account reactivated: RDB1001-0001
+[2026-04-06 15:03:49] | ACCOUNT_SUSPENDED | Account suspended: RDB1001-0001
+[2026-04-06 15:04:04] | WITHDRAWAL_FAILED | Failed withdrawal from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:04:06] | WITHDRAWAL_FAILED | Failed withdrawal from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:04:06] | WITHDRAWAL_FAILED | Failed withdrawal from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:04:06] | WITHDRAWAL_FAILED | Failed withdrawal from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:04:06] | WITHDRAWAL_FAILED | Failed withdrawal from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:04:06] | WITHDRAWAL_FAILED | Failed withdrawal from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:04:06] | WITHDRAWAL_FAILED | Failed withdrawal from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:04:21] | DEPOSIT | Deposit LKR 10,000.00 into RDB1001-0002
+[2026-04-06 15:05:10] | TRANSFER_ROLLBACK | Reversing withdrawal from RDB1001-0002 due to destination error: Cannot deposit to Closed account
+[2026-04-06 15:05:10] | TRANSFER_FAILED | Failed transfer from RDB1001-0002: Cannot deposit to Closed account
+[2026-04-06 15:05:38] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:38] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:38] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:38] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:39] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:39] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:39] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:39] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:39] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:39] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:40] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:40] | TRANSFER_FAILED | Failed transfer from RDB1001-0001: Cannot withdraw from Suspended account
+[2026-04-06 15:05:57] | LOGOUT | User logged out: CUST-1001
+[2026-04-06 15:06:10] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:06:36] | ACCOUNT_UNLOCK | Account unlocked: CUST-1001 by ADMIN-02
+[2026-04-06 15:06:39] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:06:41] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:06:41] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:06:41] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:06:41] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:06:42] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:06:42] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:06:42] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:06:51] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 15:07:03] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 15:07:42] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:07:50] | ACCOUNT_UNLOCK | Account unlocked: CUST-1001 by ADMIN-02
+[2026-04-06 15:08:03] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:08:04] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:08:04] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:08:04] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:08:04] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:08:04] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:08:04] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:08:05] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:08:41] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:08:47] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:09:09] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:09:09] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:09:09] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:09:10] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:09:10] | LOGIN_LOCKED | Attempt on locked account: testuser@gmail.com
+[2026-04-06 15:09:36] | PASSWORD_RECOVERY | Password recovered for: CUST-1001
+[2026-04-06 15:09:47] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 15:11:01] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 15:12:35] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 15:13:15] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 15:13:51] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 15:14:37] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 15:15:13] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 15:22:02] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 15:22:20] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 15:23:37] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 15:24:03] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 15:39:51] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 15:46:56] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 15:48:31] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 15:49:15] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 16:00:06] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 16:00:20] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 16:00:44] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 16:03:59] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 16:04:17] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 16:04:42] | LOGIN_SUCCESS | User logged in: STAFF-101 (teststaff@gmail.com) Role: Staff
+[2026-04-06 16:05:22] | LOGOUT | User logged out: STAFF-101
+[2026-04-06 16:05:42] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 16:09:07] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 16:16:42] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 16:17:04] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 16:18:20] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 16:18:43] | LOGIN_FAILED | Invalid password for: teststaff@gmail.com (Attempts remaining: 2)
+[2026-04-06 16:19:01] | LOGIN_SUCCESS | User logged in: STAFF-101 (teststaff@gmail.com) Role: Staff
+[2026-04-06 16:19:52] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 16:20:16] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 16:21:21] | LOAN_APPLICATION | Loan application LOAN-000003 submitted by CUST-1001 - Personal Loan $100,000.00
+[2026-04-06 16:23:00] | ACCOUNT_REACTIVATED | Account reactivated: RDB1001-0001
+[2026-04-06 16:23:11] | LOAN_APPROVED | Loan LOAN-000003 approved by STAFF-101 - $100,000.00
+[2026-04-06 16:30:39] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 16:30:42] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 16:31:11] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 16:31:31] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
+[2026-04-06 16:31:39] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 16:32:23] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 16:33:06] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 16:33:56] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 16:37:38] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 17:16:12] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 17:16:27] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 17:17:14] | LOGOUT | User logged out: ADMIN-02
+[2026-04-06 17:17:31] | LOGIN_FAILED | Unknown email: testuser@gamil.com
+[2026-04-06 17:17:47] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
+[2026-04-06 17:18:05] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 17:20:11] | LOGOUT | User logged out: CUST-1001
+[2026-04-06 17:20:40] | LOGIN_FAILED | Invalid password for: teststaff@gmail.com (Attempts remaining: 2)
+[2026-04-06 17:21:52] | LOGIN_SUCCESS | User logged in: STAFF-101 (teststaff@gmail.com) Role: Staff
+[2026-04-06 17:22:05] | LOGOUT | User logged out: STAFF-101
+[2026-04-06 17:22:57] | LOGIN_FAILED | Invalid password for: testuser@gmail.com (Attempts remaining: 2)
+[2026-04-06 17:23:04] | LOGIN_SUCCESS | User logged in: CUST-1001 (testuser@gmail.com) Role: Customer
+[2026-04-06 17:23:15] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown
+[2026-04-06 17:28:41] | SYSTEM_START | Rajarata Digital Bank v1.0.0 started
+[2026-04-06 17:28:56] | LOGIN_SUCCESS | User logged in: ADMIN-02 (admin@rajarata.com) Role: Administrator
+[2026-04-06 17:29:00] | SYSTEM_SHUTDOWN | Rajarata Digital Bank shutdown

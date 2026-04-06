@@ -18,7 +18,7 @@ import com.rajarata.bank.ui.MainMenu;
  * 9. INTERFACES - 4 interfaces defining contracts (Transactable, Reportable, etc.)
  * 10. FILE I/O - Complete file-based persistence using FileHandler utility
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class Main {
@@ -51,3 +51,4 @@ public class Main {
         }
     }
 }
+

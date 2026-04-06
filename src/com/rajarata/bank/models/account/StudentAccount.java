@@ -16,7 +16,7 @@ import com.rajarata.bank.utils.DateUtil;
  * OOP Concept: Polymorphism - Overrides abstract methods with student-specific
  * implementations including age validation.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class StudentAccount extends Account {
@@ -178,3 +178,4 @@ public class StudentAccount extends Account {
         return (institution != null ? institution : "") + "|" + (studentId != null ? studentId : "");
     }
 }
+

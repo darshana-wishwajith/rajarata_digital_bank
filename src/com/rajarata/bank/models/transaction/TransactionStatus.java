@@ -6,7 +6,7 @@ package com.rajarata.bank.models.transaction;
  * OOP Concept: Abstraction - Encapsulating transaction states as type-safe enum values
  * rather than using raw strings or integers, preventing invalid state assignments.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public enum TransactionStatus {
@@ -38,3 +38,4 @@ public enum TransactionStatus {
         return displayName;
     }
 }
+

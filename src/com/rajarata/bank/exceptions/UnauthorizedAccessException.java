@@ -7,7 +7,7 @@ package com.rajarata.bank.exceptions;
  * OOP Concept: Exception Handling - Enforcing role-based access control
  * through exception handling mechanisms.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class UnauthorizedAccessException extends Exception {
@@ -45,3 +45,4 @@ public class UnauthorizedAccessException extends Exception {
     /** @return The action that was denied */
     public String getAttemptedAction() { return attemptedAction; }
 }
+

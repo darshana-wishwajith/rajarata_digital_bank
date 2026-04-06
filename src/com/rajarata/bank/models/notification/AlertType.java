@@ -3,7 +3,7 @@ package com.rajarata.bank.models.notification;
 /**
  * Enumeration of alert/notification types used in the notification system.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public enum AlertType {
@@ -53,3 +53,4 @@ public enum AlertType {
         return displayName;
     }
 }
+

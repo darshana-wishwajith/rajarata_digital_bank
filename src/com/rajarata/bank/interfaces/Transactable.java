@@ -14,7 +14,7 @@ import com.rajarata.bank.exceptions.InvalidAccountException;
  * OOP Concept: Polymorphism - Different account types implement these methods
  * differently (e.g., SavingsAccount has withdrawal limits, CheckingAccount has overdraft).
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public interface Transactable {
@@ -54,3 +54,4 @@ public interface Transactable {
      */
     boolean canWithdraw(double amount);
 }
+

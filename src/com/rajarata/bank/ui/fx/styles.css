@@ -404,12 +404,53 @@
     -fx-alignment: center;
 }
 
-.badge-blue {
-    -fx-background-color: -rdb-primary;
+.badge-default {
+    -fx-background-color: linear-gradient(to right, #3498DB, #2980B9);
     -fx-text-fill: white;
     -fx-font-size: 10px;
-    -fx-padding: 2 6;
-    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-padding: 3 8;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.4), 8, 0, 0, 2);
+}
+
+.btn-outline-sm {
+    -fx-background-color: transparent;
+    -fx-border-color: #3498DB;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 20;
+    -fx-text-fill: #3498DB;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 15;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s;
+}
+
+.btn-outline-sm:hover {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(52, 152, 219, 0.3), 10, 0, 0, 4);
+}
+
+.btn-sidebar-refresh {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-text-fill: white;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 8 20;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s;
+}
+
+.btn-sidebar-refresh:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
 .status-active {
@@ -444,6 +485,23 @@
 .scroll-bar .thumb {
     -fx-background-color: -rdb-gray;
     -fx-background-radius: 4;
+}
+
+.sidebar-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.sidebar-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.sidebar-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #FFFFFF40;
+}
+
+.sidebar-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #FFFFFF60;
 }
 
 /* ---------- COMBO BOX ---------- */

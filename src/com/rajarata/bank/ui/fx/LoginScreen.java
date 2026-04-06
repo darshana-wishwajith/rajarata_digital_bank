@@ -1,12 +1,10 @@
 package com.rajarata.bank.ui.fx;
 
-import com.rajarata.bank.Bank;
 import com.rajarata.bank.models.user.User;
 import com.rajarata.bank.exceptions.*;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.*;
 
 /**
  * Login screen for the JavaFX banking application.
@@ -91,10 +89,6 @@ public class LoginScreen {
         Separator sep = new Separator();
         sep.setPadding(new Insets(8, 0, 4, 0));
 
-        // Default credentials hint
-        Label hint = new Label("Default Admin: admin@rajarata.com / Admin@123");
-        hint.setStyle("-fx-text-fill: #B0B8C1; -fx-font-size: 11px;");
-
         card.getChildren().addAll(
                 bankIcon, title, subtitle,
                 new Separator(),
@@ -104,8 +98,7 @@ public class LoginScreen {
                 loginBtn,
                 sep,
                 registerBox,
-                forgotLink,
-                hint
+                forgotLink
         );
 
         container.getChildren().add(card);
@@ -130,12 +123,6 @@ public class LoginScreen {
     private void showError(String message) {
         statusLabel.setText("⚠ " + message);
         statusLabel.getStyleClass().setAll("alert-error");
-        statusLabel.setVisible(true);
-    }
-
-    private void showSuccess(String message) {
-        statusLabel.setText("✓ " + message);
-        statusLabel.getStyleClass().setAll("alert-success");
         statusLabel.setVisible(true);
     }
 
@@ -166,45 +153,53 @@ public class LoginScreen {
         Label resultLabel = new Label();
         resultLabel.setWrapText(true);
 
-        Button lookupBtn = new Button("Look Up Account");
-        lookupBtn.getStyleClass().add("btn-primary");
-        lookupBtn.setOnAction(e -> {
-            String question = screenManager.getBank().getAuthService().getSecurityQuestion(emailField.getText());
-            if (question != null) {
-                questionLabel.setText("Security Question: " + question);
-                questionLabel.setVisible(true);
-                answerField.setVisible(true);
-                newPwdField.setVisible(true);
-                lookupBtn.setText("Reset Password");
-                lookupBtn.setOnAction(ev -> {
-                    try {
-                        boolean ok = screenManager.getBank().getAuthService()
-                                .recoverPassword(emailField.getText(), answerField.getText(), newPwdField.getText());
-                        if (ok) {
-                            resultLabel.setText("✓ Password reset! You can now login.");
-                            resultLabel.setStyle("-fx-text-fill: #27AE60;");
-                        } else {
-                            resultLabel.setText("✗ Incorrect security answer.");
-                            resultLabel.setStyle("-fx-text-fill: #E74C3C;");
-                        }
-                    } catch (InvalidInputException ex) {
-                        resultLabel.setText("✗ " + ex.getMessage());
-                        resultLabel.setStyle("-fx-text-fill: #E74C3C;");
-                    }
-                });
-            } else {
-                resultLabel.setText("No account found for this email.");
-                resultLabel.setStyle("-fx-text-fill: #E74C3C;");
-            }
-        });
-
         content.getChildren().addAll(
-                new Label("Email:"), emailField, lookupBtn,
+                new Label("Email:"), emailField,
                 questionLabel, answerField, newPwdField, resultLabel
         );
 
         dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        
+        ButtonType actionButtonType = new ButtonType("Look Up Account", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(actionButtonType, ButtonType.CANCEL);
+        
+        Button actionBtn = (Button) dialog.getDialogPane().lookupButton(actionButtonType);
+        actionBtn.getStyleClass().add("btn-primary");
+        
+        // Prevent dialog from closing and handle state-based logic
+        actionBtn.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            if (actionBtn.getText().equals("Look Up Account")) {
+                String question = screenManager.getBank().getAuthService().getSecurityQuestion(emailField.getText());
+                if (question != null) {
+                    questionLabel.setText("Security Question: " + question);
+                    questionLabel.setVisible(true);
+                    answerField.setVisible(true);
+                    newPwdField.setVisible(true);
+                    actionBtn.setText("Reset Password");
+                } else {
+                    resultLabel.setText("No account found for this email.");
+                    resultLabel.setStyle("-fx-text-fill: #E74C3C;");
+                }
+            } else {
+                try {
+                    boolean ok = screenManager.getBank().getAuthService()
+                            .recoverPassword(emailField.getText(), answerField.getText(), newPwdField.getText());
+                    if (ok) {
+                        resultLabel.setText("✓ Password reset! You can now login.");
+                        resultLabel.setStyle("-fx-text-fill: #27AE60;");
+                        actionBtn.setDisable(true);
+                    } else {
+                        resultLabel.setText("✗ Incorrect security answer.");
+                        resultLabel.setStyle("-fx-text-fill: #E74C3C;");
+                    }
+                } catch (InvalidInputException ex) {
+                    resultLabel.setText("✗ " + ex.getMessage());
+                    resultLabel.setStyle("-fx-text-fill: #E74C3C;");
+                }
+            }
+            event.consume(); // Keep dialog open unless user clicks Close
+        });
+
         dialog.showAndWait();
     }
 

@@ -16,7 +16,7 @@ import java.util.List;
  * 
  * OOP Concept: Composition - Loan HAS-A list of payment records.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class Loan {
@@ -33,6 +33,8 @@ public class Loan {
     private LoanType loanType;
     /** Approved loan amount */
     private double loanAmount;
+    /** Currency of the loan */
+    private String currency;
     /** Annual interest rate (APR) */
     private double interestRate;
     /** Loan term in months */
@@ -43,6 +45,10 @@ public class Loan {
     private double remainingBalance;
     /** Total interest to be paid over loan life */
     private double totalInterest;
+    /** Total late payment penalties applied */
+    private double totalPenalties;
+    /** Number of late penalties applied */
+    private int penaltyCount;
     /** Current loan status */
     private LoanStatus status;
     /** Date the loan was approved and disbursed */
@@ -91,45 +97,52 @@ public class Loan {
      * @param customerId The applying customer's ID
      * @param loanType Type of loan
      * @param loanAmount Requested loan amount
+     * @param currency Loan currency
      * @param termMonths Requested term in months
      * @param purpose Loan purpose description
      * @param employmentDetails Employment information
      * @param creditScore Credit score at application time
      */
-    public Loan(String customerId, LoanType loanType, double loanAmount,
+    public Loan(String customerId, LoanType loanType, double loanAmount, String currency,
                 int termMonths, String purpose, String employmentDetails, int creditScore) {
         this();
         this.loanId = generateLoanId();
         this.customerId = customerId;
         this.loanType = loanType;
         this.loanAmount = loanAmount;
+        this.currency = currency;
         this.termMonths = termMonths;
         this.purpose = purpose;
         this.employmentDetails = employmentDetails;
         this.creditScoreAtApplication = creditScore;
         this.remainingBalance = loanAmount;
-        this.interestRate = calculateInterestRate(creditScore);
+        this.interestRate = calculateInterestRate(loanType, creditScore);
         this.monthlyInstallment = calculateMonthlyInstallment();
         this.totalInterest = (monthlyInstallment * termMonths) - loanAmount;
+        this.totalPenalties = 0;
+        this.penaltyCount = 0;
     }
 
     // ==================== INTEREST RATE CALCULATION ====================
 
     /**
-     * Calculates the interest rate based on credit score.
-     * - 750+: 5.5% APR
-     * - 650-749: 7.5% APR
-     * - 550-649: 10.5% APR
-     * - Below 550: Application rejected (returns -1)
+     * Calculates the interest rate based on loan type and credit score.
      * 
+     * @param type The selected loan type 
      * @param creditScore The applicant's credit score
-     * @return Annual interest rate as decimal, or -1 if rejected
+     * @return Final annual interest rate (Base + Credit Adjustment), or -1 if rejected
      */
-    public static double calculateInterestRate(int creditScore) {
-        if (creditScore >= 750) return 0.055;
-        if (creditScore >= 650) return 0.075;
-        if (creditScore >= 550) return 0.105;
-        return -1; // Below 550 - rejected
+    public static double calculateInterestRate(LoanType type, int creditScore) {
+        if (creditScore < 550) return -1; // Minimum score threshold
+
+        double base = type.getBaseInterestRate();
+        double adjustment = 0.0;
+
+        if (creditScore >= 750) adjustment = 0.0;      // Excellent: no addition
+        else if (creditScore >= 650) adjustment = 0.02; // Good: +2% 
+        else if (creditScore >= 550) adjustment = 0.05; // Fair: +5%
+
+        return base + adjustment;
     }
 
     /**
@@ -231,24 +244,39 @@ public class Loan {
     }
 
     /**
+     * Automatically applies a late payment penalty to the loan.
+     * Increases the remaining balance and logs the action.
+     */
+    public void applyLatePenalty() {
+        double penalty = calculateLatePaymentPenalty();
+        this.remainingBalance += penalty;
+        this.totalPenalties += penalty;
+        this.penaltyCount++;
+        
+        String record = String.format("%s|PENALTY|%.2f|0.00|0.00|%.2f|Late payment penalty applied",
+                DateUtil.getCurrentDate(), penalty, remainingBalance);
+        paymentHistory.add(record);
+    }
+
+    /**
      * Generates the full amortization/repayment schedule.
      * @return Formatted string of the repayment schedule
      */
     public String generateRepaymentSchedule() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n╔══════════════════════════════════════════════════════════════════╗\n");
-        sb.append("║                    LOAN REPAYMENT SCHEDULE                      ║\n");
-        sb.append("╠══════════════════════════════════════════════════════════════════╣\n");
-        sb.append(String.format("║ Loan ID     : %-49s ║\n", loanId));
-        sb.append(String.format("║ Loan Type   : %-49s ║\n", loanType.getDisplayName()));
-        String sym = CurrencyUtil.getCurrencySymbol(null);
-        sb.append(String.format("║ Principal   : %s%-48s ║\n", sym, ValidationUtil.formatAmount(loanAmount)));
-        sb.append(String.format("║ Rate (APR)  : %-49s ║\n", String.format("%.1f%%", interestRate * 100)));
-        sb.append(String.format("║ Term        : %-49s ║\n", termMonths + " months"));
-        sb.append(String.format("║ EMI         : %s%-48s ║\n", sym, ValidationUtil.formatAmount(monthlyInstallment)));
-        sb.append("╠══════════════════════════════════════════════════════════════════╣\n");
-        sb.append("║  Month │    Payment    │  Principal   │  Interest   │  Balance   ║\n");
-        sb.append("╠════════╪═══════════════╪══════════════╪═════════════╪════════════╣\n");
+        sb.append("\n╔══════════════════════════════════════════════════════════════════════════╗\n");
+        sb.append("║                        LOAN REPAYMENT SCHEDULE                           ║\n");
+        sb.append("╠══════════════════════════════════════════════════════════════════════════╣\n");
+        sb.append(String.format("║ Loan ID        : %-55s ║\n", loanId));
+        sb.append(String.format("║ Loan Type      : %-55s ║\n", loanType.getDisplayName()));
+        String sym = CurrencyUtil.getCurrencySymbol(currency);
+        sb.append(String.format("║ Principal      : %s%-54s ║\n", sym, ValidationUtil.formatAmount(loanAmount)));
+        sb.append(String.format("║ Rate (APR)     : %-55s ║\n", String.format("%.1f%%", interestRate * 100)));
+        sb.append(String.format("║ Term           : %-55s ║\n", termMonths + " months"));
+        sb.append(String.format("║ EMI            : %s%-54s ║\n", sym, ValidationUtil.formatAmount(monthlyInstallment)));
+        sb.append("╠══════════╪═════════════════╪═════════════════╪═════════════════╪═════════╣\n");
+        sb.append("║  Month   │     Payment     │    Principal    │    Interest     │ Balance ║\n");
+        sb.append("╟──────────┼─────────────────┼─────────────────┼─────────────────┼─────────╢\n");
 
         double balance = loanAmount;
         double monthlyRate = interestRate / 12;
@@ -264,20 +292,20 @@ public class Loan {
             balance -= principalPortion;
             if (balance < 0) balance = 0;
 
-            sb.append(String.format("║  %4d  │ %13s │ %12s │ %11s │ %10s ║\n",
+            sb.append(String.format("║   %4d   │ %15s │ %15s │ %15s │ %7s ║\n",
                     month,
-                    sym + ValidationUtil.formatAmount(monthlyInstallment),
-                    sym + ValidationUtil.formatAmount(principalPortion),
-                    sym + ValidationUtil.formatAmount(interestPortion),
-                    sym + ValidationUtil.formatAmount(balance)));
+                    sym + " " + ValidationUtil.formatAmount(monthlyInstallment),
+                    sym + " " + ValidationUtil.formatAmount(principalPortion),
+                    sym + " " + ValidationUtil.formatAmount(interestPortion),
+                    ValidationUtil.formatAmount(balance)));
         }
 
-        sb.append("╠══════════════════════════════════════════════════════════════════╣\n");
-        sb.append(String.format("║ Total Payment  : %s%-44s ║\n", sym,
+        sb.append("╠══════════════════════════════════════════════════════════════════════════╣\n");
+        sb.append(String.format("║ Total Payment  : %s%-54s ║\n", sym,
                 ValidationUtil.formatAmount(monthlyInstallment * termMonths)));
-        sb.append(String.format("║ Total Interest : %s%-44s ║\n", sym,
+        sb.append(String.format("║ Total Interest : %s%-54s ║\n", sym,
                 ValidationUtil.formatAmount(totalInterest)));
-        sb.append("╚══════════════════════════════════════════════════════════════════╝\n");
+        sb.append("╚══════════════════════════════════════════════════════════════════════════╝\n");
 
         return sb.toString();
     }
@@ -288,7 +316,7 @@ public class Loan {
      */
     public String getLoanSummary() {
         StringBuilder sb = new StringBuilder();
-        String sym = CurrencyUtil.getCurrencySymbol(null);
+        String sym = CurrencyUtil.getCurrencySymbol(currency);
         sb.append(String.format("  %-12s | %-14s | %s%12s | %s%12s | %-10s",
                 loanId,
                 loanType.getDisplayName(),
@@ -311,9 +339,12 @@ public class Loan {
                 loanId, customerId,
                 disbursementAccount != null ? disbursementAccount : "",
                 loanType.name(),
-                String.valueOf(loanAmount), String.valueOf(interestRate),
+                String.valueOf(loanAmount), 
+                currency != null ? currency : "LKR",
+                String.valueOf(interestRate),
                 String.valueOf(termMonths), String.valueOf(monthlyInstallment),
                 String.valueOf(remainingBalance), String.valueOf(totalInterest),
+                String.valueOf(totalPenalties), String.valueOf(penaltyCount),
                 status.name(),
                 approvalDate != null ? approvalDate : "",
                 nextPaymentDate != null ? nextPaymentDate : "",
@@ -355,6 +386,9 @@ public class Loan {
     public double getLoanAmount() { return loanAmount; }
     public void setLoanAmount(double loanAmount) { this.loanAmount = loanAmount; }
 
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
+
     public double getInterestRate() { return interestRate; }
     public void setInterestRate(double interestRate) { this.interestRate = interestRate; }
 
@@ -369,6 +403,12 @@ public class Loan {
 
     public double getTotalInterest() { return totalInterest; }
     public void setTotalInterest(double totalInterest) { this.totalInterest = totalInterest; }
+
+    public double getTotalPenalties() { return totalPenalties; }
+    public void setTotalPenalties(double penalties) { this.totalPenalties = penalties; }
+
+    public int getPenaltyCount() { return penaltyCount; }
+    public void setPenaltyCount(int count) { this.penaltyCount = count; }
 
     public LoanStatus getStatus() { return status; }
     public void setStatus(LoanStatus status) { this.status = status; }
@@ -403,3 +443,4 @@ public class Loan {
     public List<String> getPaymentHistory() { return paymentHistory; }
     public void setPaymentHistory(List<String> history) { this.paymentHistory = history; }
 }
+

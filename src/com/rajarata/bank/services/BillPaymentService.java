@@ -2,7 +2,6 @@ package com.rajarata.bank.services;
 
 import com.rajarata.bank.models.account.Account;
 import com.rajarata.bank.models.transaction.*;
-import com.rajarata.bank.models.notification.AlertType;
 import com.rajarata.bank.exceptions.*;
 import com.rajarata.bank.utils.*;
 
@@ -12,7 +11,7 @@ import java.util.*;
  * Service class for bill payment operations.
  * Supports electricity, water, internet, and phone bill payments.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class BillPaymentService {
@@ -23,8 +22,6 @@ public class BillPaymentService {
     private final TransactionService transactionService;
     /** Reference to account service */
     private final AccountService accountService;
-    /** Reference to notification service */
-    private NotificationService notificationService;
 
     /** Supported bill providers */
     public static final String[][] PROVIDERS = {
@@ -40,9 +37,6 @@ public class BillPaymentService {
         this.accountService = accountService;
     }
 
-    public void setNotificationService(NotificationService notificationService) {
-        this.notificationService = notificationService;
-    }
 
     /**
      * Adds a payee for a customer.
@@ -116,25 +110,15 @@ public class BillPaymentService {
 
         String description = "Bill Payment - " + providerName + " (" + nickname + ") Ref: " + billAccountNumber;
 
-        // Process as withdrawal
+        // Process as withdrawal using transactionService to ensure consistent fraud checks and logging
         Account account = accountService.getAccount(sourceAccount);
         Transaction txn = new Transaction(TransactionType.BILL_PAYMENT, sourceAccount,
                 amount, description);
 
         try {
-            account.withdraw(amount);
-            txn.complete(account.getBalance());
-            account.addTransaction(txn);
-
-            accountService.saveAllAccounts();
-            FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
-            FileHandler.logAudit("BILL_PAYMENT",
-                    "Bill payment $" + ValidationUtil.formatAmount(amount) + " to " +
-                    providerName + " from " + sourceAccount);
-
+            transactionService.processWithdrawal(account, txn, amount, true);
         } catch (InsufficientFundsException | InvalidAccountException e) {
-            txn.fail(e.getMessage());
-            FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
+            // Already handled by processWithdrawal but we rethrow for the UI
             throw e;
         }
 
@@ -193,6 +177,7 @@ public class BillPaymentService {
      * Loads saved payees from file.
      */
     public void loadPayees() {
+        savedPayees.clear();
         List<String> lines = FileHandler.readAllLines(FileHandler.PAYEES_FILE);
         for (String line : lines) {
             try {
@@ -207,3 +192,4 @@ public class BillPaymentService {
         }
     }
 }
+

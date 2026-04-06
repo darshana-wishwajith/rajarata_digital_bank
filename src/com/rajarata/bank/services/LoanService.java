@@ -1,6 +1,8 @@
 package com.rajarata.bank.services;
 
-import com.rajarata.bank.models.loan.*;
+import com.rajarata.bank.models.loan.Loan;
+import com.rajarata.bank.models.loan.LoanType;
+import com.rajarata.bank.models.loan.LoanStatus;
 import com.rajarata.bank.models.account.Account;
 import com.rajarata.bank.models.notification.AlertType;
 import com.rajarata.bank.models.transaction.*;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
  * Service class for loan management operations.
  * Handles loan applications, approval workflow, disbursement, and repayments.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class LoanService {
@@ -28,16 +30,14 @@ public class LoanService {
     private final AuthenticationService authService;
     /** Reference to notification service */
     private NotificationService notificationService;
+    /** Reference to transaction service */
+    private final TransactionService transactionService;
 
-    /** Minimum account age for loan eligibility (days) */
-    private static final int MIN_ACCOUNT_AGE_DAYS = 180; // 6 months
-    /** Minimum balance for loan eligibility */
-    private static final double MIN_BALANCE_FOR_LOAN = 1000.0;
-
-    public LoanService(AccountService accountService, AuthenticationService authService) {
+    public LoanService(AccountService accountService, AuthenticationService authService, TransactionService transactionService) {
         this.loansById = new HashMap<>();
         this.accountService = accountService;
         this.authService = authService;
+        this.transactionService = transactionService;
     }
 
     public void setNotificationService(NotificationService notificationService) {
@@ -60,7 +60,7 @@ public class LoanService {
      */
     public Loan applyForLoan(String customerId, LoanType loanType, double amount,
                               int termMonths, String purpose, String employmentDetails,
-                              String disbursementAccount) throws InvalidInputException {
+                              String disbursementAccount) throws InvalidInputException, InvalidAccountException {
 
         Customer customer = authService.getCustomer(customerId);
         if (customer == null) {
@@ -85,16 +85,20 @@ public class LoanService {
         }
 
         // Credit score check
+        // Check interest rate eligibility
         int creditScore = customer.getCreditScore();
-        double rate = Loan.calculateInterestRate(creditScore);
-        if (rate < 0) {
+        double rate = Loan.calculateInterestRate(loanType, creditScore);
+        if (rate <= 0) {
             throw new InvalidInputException(
                 "Loan application rejected: Credit score (" + creditScore + ") is below minimum requirement (550)",
                 "creditScore");
         }
 
         // Create loan application
-        Loan loan = new Loan(customerId, loanType, amount, termMonths, purpose,
+        Account account = accountService.getAccount(disbursementAccount);
+        String currency = account != null ? account.getCurrency() : "LKR";
+
+        Loan loan = new Loan(customerId, loanType, amount, currency, termMonths, purpose,
                             employmentDetails, creditScore);
         loan.setDisbursementAccount(disbursementAccount);
 
@@ -139,23 +143,17 @@ public class LoanService {
         String disbursementAccount = loan.getDisbursementAccount();
         Account account = accountService.getAccount(disbursementAccount);
 
-        // Approve and disburse
-        loan.approve(staffId, comments, disbursementAccount);
-
-        // Credit loan amount to account
-        account.deposit(loan.getLoanAmount());
-
-        // Record disbursement transaction
+        // Disbursement
         Transaction txn = new Transaction(TransactionType.LOAN_DISBURSEMENT,
                 disbursementAccount, loan.getLoanAmount(),
                 "Loan disbursement - " + loan.getLoanId());
-        txn.complete(account.getBalance());
-        account.addTransaction(txn);
+        
+        transactionService.processDeposit(account, txn, loan.getLoanAmount(), false);
 
-        // Save
+        // Save loan status
+        loan.approve(staffId, comments, disbursementAccount);
         saveLoan(loan);
-        accountService.saveAllAccounts();
-        FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
+
         FileHandler.logAudit("LOAN_APPROVED",
                 "Loan " + loanId + " approved by " + staffId + " - $" +
                 ValidationUtil.formatAmount(loan.getLoanAmount()));
@@ -222,23 +220,18 @@ public class LoanService {
 
         Account account = accountService.getAccount(sourceAccount);
 
-        // Withdraw from source account
-        account.withdraw(paymentAmount);
-
-        // Record loan payment
-        loan.makePayment(paymentAmount);
-
-        // Create transaction
+        // Create transaction for repayment
         Transaction txn = new Transaction(TransactionType.LOAN_REPAYMENT,
                 sourceAccount, paymentAmount,
                 "Loan payment - " + loanId);
-        txn.complete(account.getBalance());
-        account.addTransaction(txn);
 
-        // Save
+        // Process withdrawal using transactionService
+        transactionService.processWithdrawal(account, txn, paymentAmount, false);
+
+        // Update loan status
+        loan.makePayment(paymentAmount);
         saveLoan(loan);
-        accountService.saveAllAccounts();
-        FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
+
         FileHandler.logAudit("LOAN_PAYMENT",
                 "Loan payment $" + ValidationUtil.formatAmount(paymentAmount) + " for " + loanId);
 
@@ -307,6 +300,7 @@ public class LoanService {
      * Loads all loan data from file.
      */
     public void loadLoans() {
+        loansById.clear();
         List<String> lines = FileHandler.readAllLines(FileHandler.LOANS_FILE);
         int maxCounter = 0;
 
@@ -321,21 +315,24 @@ public class LoanService {
                 loan.setDisbursementAccount(parts[2]);
                 loan.setLoanType(LoanType.valueOf(parts[3]));
                 loan.setLoanAmount(Double.parseDouble(parts[4]));
-                loan.setInterestRate(Double.parseDouble(parts[5]));
-                loan.setTermMonths(Integer.parseInt(parts[6]));
-                loan.setMonthlyInstallment(Double.parseDouble(parts[7]));
-                loan.setRemainingBalance(Double.parseDouble(parts[8]));
-                loan.setTotalInterest(Double.parseDouble(parts[9]));
-                loan.setStatus(LoanStatus.valueOf(parts[10]));
-                if (!parts[11].isEmpty()) loan.setApprovalDate(parts[11]);
-                if (!parts[12].isEmpty()) loan.setNextPaymentDate(parts[12]);
-                loan.setPaymentsMade(Integer.parseInt(parts[13]));
-                if (!parts[14].isEmpty()) loan.setApprovedBy(parts[14]);
-                if (!parts[15].isEmpty()) loan.setApproverComments(parts[15]);
-                if (!parts[16].isEmpty()) loan.setPurpose(parts[16]);
-                if (!parts[17].isEmpty()) loan.setEmploymentDetails(parts[17]);
-                loan.setCreditScoreAtApplication(Integer.parseInt(parts[18]));
-                if (!parts[19].isEmpty()) loan.setApplicationDate(parts[19]);
+                loan.setCurrency(parts[5]);
+                loan.setInterestRate(Double.parseDouble(parts[6]));
+                loan.setTermMonths(Integer.parseInt(parts[7]));
+                loan.setMonthlyInstallment(Double.parseDouble(parts[8]));
+                loan.setRemainingBalance(Double.parseDouble(parts[9]));
+                loan.setTotalInterest(Double.parseDouble(parts[10]));
+                loan.setTotalPenalties(Double.parseDouble(parts[11]));
+                loan.setPenaltyCount(Integer.parseInt(parts[12]));
+                loan.setStatus(LoanStatus.valueOf(parts[13]));
+                if (!parts[14].isEmpty()) loan.setApprovalDate(parts[14]);
+                if (!parts[15].isEmpty()) loan.setNextPaymentDate(parts[15]);
+                loan.setPaymentsMade(Integer.parseInt(parts[16]));
+                if (!parts[17].isEmpty()) loan.setApprovedBy(parts[17]);
+                if (!parts[18].isEmpty()) loan.setApproverComments(parts[18]);
+                if (!parts[19].isEmpty()) loan.setPurpose(parts[19]);
+                if (!parts[20].isEmpty()) loan.setEmploymentDetails(parts[20]);
+                loan.setCreditScoreAtApplication(Integer.parseInt(parts[21]));
+                if (parts.length > 22 && !parts[22].isEmpty()) loan.setApplicationDate(parts[22]);
 
                 loansById.put(loan.getLoanId(), loan);
 
@@ -376,13 +373,31 @@ public class LoanService {
 
             if (daysUntilDue < 0) {
                 // Overdue payment — urgent notification
+                String overdueMsg = "Your loan " + loan.getLoanId() + " payment of " +
+                        CurrencyUtil.getCurrencySymbol(loan.getCurrency()) +
+                        ValidationUtil.formatAmount(loan.getMonthlyInstallment()) +
+                        " was due on " + DateUtil.formatForDisplay(nextPayment) + ". ";
+                
+                // Check if grace period exceeded and penalty not yet applied for THIS installment
+                // Logic: if overdue days >= Grace period AND we haven't applied a penalty today/recently
+                if (Math.abs(daysUntilDue) >= Loan.GRACE_PERIOD_DAYS) {
+                    boolean alreadyPenalized = loan.getPaymentHistory().stream()
+                            .anyMatch(h -> h.contains("PENALTY") && h.contains(nextPayment)); // Simple check
+                    
+                    if (!alreadyPenalized) {
+                        loan.applyLatePenalty();
+                        overdueMsg += "A late penalty of " + 
+                                CurrencyUtil.getCurrencySymbol(loan.getCurrency()) + 
+                                ValidationUtil.formatAmount(loan.calculateLatePaymentPenalty()) + 
+                                " has been applied to your balance.";
+                        saveLoan(loan);
+                    }
+                }
+                
                 notificationService.sendNotification(loan.getCustomerId(),
                         AlertType.LOAN_REMINDER,
                         "Loan Payment Overdue!",
-                        "Your loan " + loan.getLoanId() + " payment of $" +
-                        ValidationUtil.formatAmount(loan.getMonthlyInstallment()) +
-                        " was due on " + DateUtil.formatForDisplay(nextPayment) +
-                        ". Please make the payment immediately to avoid late penalties.");
+                        overdueMsg + " Please make the payment immediately.");
 
                 FileHandler.logAudit("LOAN_OVERDUE",
                         "Loan " + loan.getLoanId() + " payment overdue by " +
@@ -401,3 +416,4 @@ public class LoanService {
         }
     }
 }
+

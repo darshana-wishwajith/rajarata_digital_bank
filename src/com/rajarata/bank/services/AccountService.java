@@ -19,7 +19,7 @@ import java.util.*;
  * OOP Concept: Polymorphism - Works with Account base type, processing
  * different account subtypes uniformly.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class AccountService {
@@ -83,8 +83,8 @@ public class AccountService {
 
         // Record initial deposit transaction
         Transaction depositTxn = new Transaction(
-                TransactionType.DEPOSIT, account.getAccountNumber(),
-                initialDeposit, "Initial deposit - Account opened");
+                TransactionType.DEPOSIT, account.getAccountNumber(), null,
+                initialDeposit, account.getCurrency(), "Initial deposit - Account opened");
         depositTxn.complete(account.getBalance());
         account.addTransaction(depositTxn);
 
@@ -127,8 +127,8 @@ public class AccountService {
         // Record closing transaction
         if (remainingBalance > 0) {
             Transaction closeTxn = new Transaction(
-                    TransactionType.WITHDRAWAL, accountNumber,
-                    remainingBalance, "Account closure - Balance settlement");
+                    TransactionType.WITHDRAWAL, accountNumber, null,
+                    remainingBalance, account.getCurrency(), "Account closure - Balance settlement");
             closeTxn.complete(0);
             account.addTransaction(closeTxn);
             FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, closeTxn.toFileString());
@@ -227,6 +227,13 @@ public class AccountService {
      * Loads all account data from file.
      */
     public void loadAccounts() {
+        accountsByNumber.clear();
+        // Clear accounts from customers to avoid duplicates during reload
+        for (com.rajarata.bank.models.user.User user : authService.getAllUsersById().values()) {
+            if (user instanceof com.rajarata.bank.models.user.Customer) {
+                ((com.rajarata.bank.models.user.Customer) user).getAccounts().clear();
+            }
+        }
         List<String> lines = FileHandler.readAllLines(FileHandler.ACCOUNTS_FILE);
         int maxSeq = 0;
 
@@ -317,15 +324,16 @@ public class AccountService {
                         Double.parseDouble(parts[9]) // balanceAfter
                 );
 
-                // Link to source account
-                if (txn.getSourceAccount() != null) {
+                // Link to account history - ONLY if transaction was COMPLETED
+                // Failed/Pending transactions stay in logs but don't show in account history
+                if (txn.getSourceAccount() != null && txn.getStatus() == TransactionStatus.COMPLETED) {
                     Account acc = accountsByNumber.get(txn.getSourceAccount());
                     if (acc != null) {
                         acc.addTransaction(txn);
                     }
                 }
 
-                // Track counter
+                // Track counter for ID generation
                 try {
                     String numStr = parts[0].substring(parts[0].lastIndexOf('-') + 1);
                     int num = Integer.parseInt(numStr);
@@ -351,3 +359,4 @@ public class AccountService {
         FileHandler.writeAllLines(FileHandler.ACCOUNTS_FILE, lines);
     }
 }
+

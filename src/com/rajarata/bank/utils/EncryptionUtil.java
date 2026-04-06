@@ -15,7 +15,7 @@ import java.util.Base64;
  * OOP Concept: Encapsulation - Password hashing logic is encapsulated in
  * this single class, hiding cryptographic implementation details from callers.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public final class EncryptionUtil {
@@ -104,3 +104,4 @@ public final class EncryptionUtil {
         return masked + data.substring(data.length() - visibleChars);
     }
 }
+

@@ -6,7 +6,7 @@ package com.rajarata.bank.exceptions;
  * 
  * OOP Concept: Exception Handling - Domain-specific exception for account validation errors.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class InvalidAccountException extends Exception {
@@ -36,3 +36,4 @@ public class InvalidAccountException extends Exception {
     /** @return The invalid account number */
     public String getAccountNumber() { return accountNumber; }
 }
+

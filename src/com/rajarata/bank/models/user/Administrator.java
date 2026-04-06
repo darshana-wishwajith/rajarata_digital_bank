@@ -10,7 +10,7 @@ package com.rajarata.bank.models.user;
  * OOP Concept: Polymorphism - Overrides getRole() and getDashboardMenu()
  * to provide admin-specific behavior with the most privileged access.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class Administrator extends User {
@@ -105,6 +105,15 @@ public class Administrator extends User {
         return sb.toString();
     }
 
+    /**
+     * Serializes the administrator to a delimited string.
+     * Overrides User.toFileString() to add admin-specific fields.
+     */
+    @Override
+    public String toFileString() {
+        return super.toFileString() + "|" + accessLevel;
+    }
+
     // ==================== STATIC METHODS ====================
 
     /**
@@ -136,3 +145,4 @@ public class Administrator extends User {
     /** @param canManageAdmins The admin management flag to set */
     public void setCanManageAdmins(boolean canManageAdmins) { this.canManageAdmins = canManageAdmins; }
 }
+

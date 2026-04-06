@@ -9,7 +9,7 @@ import java.util.Scanner;
  * OOP Concept: Encapsulation - All console I/O logic is encapsulated here,
  * providing a consistent UI experience across all menus.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class ConsoleUI {
@@ -151,3 +151,4 @@ public class ConsoleUI {
         System.out.println("\n".repeat(3));
     }
 }
+

@@ -8,7 +8,7 @@ package com.rajarata.bank.exceptions;
  * to provide domain-specific error handling. This allows calling code to catch
  * and handle insufficient funds scenarios differently from other errors.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class InsufficientFundsException extends Exception {
@@ -56,3 +56,4 @@ public class InsufficientFundsException extends Exception {
     /** @return The current available balance */
     public double getAvailableBalance() { return availableBalance; }
 }
+

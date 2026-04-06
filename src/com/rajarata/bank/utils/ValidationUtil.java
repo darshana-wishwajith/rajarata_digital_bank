@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * OOP Concept: Final Keyword - Regex patterns are stored as final constants,
  * compiled once for performance.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public final class ValidationUtil {
@@ -250,3 +250,4 @@ public final class ValidationUtil {
         return String.format("%,.2f", amount);
     }
 }
+

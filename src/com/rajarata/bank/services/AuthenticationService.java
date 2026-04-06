@@ -11,14 +11,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Service class for user authentication, registration, and session management.
- * Handles login, logout, account locking, and password recovery.
+ * This service handles everything about users: logging in, registering, 
+ * and keeping track of who is currently using the system.
  * 
- * OOP Concept: Encapsulation - All authentication logic is encapsulated in this
- * service. Other classes interact through the public API without needing to know
- * about password hashing, lock mechanisms, or session tracking.
+ * OOP Concepts utilized:
+ * 1. Encapsulation - This class hides the complex logic for password hashing
+ *    and user management. Other parts of the system just call login() or register().
+ * 2. Dependency Injection - We 'inject' other services like NotificationService 
+ *    after creation to allow them to talk to each other without circular issues.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class AuthenticationService {
@@ -161,10 +163,35 @@ public class AuthenticationService {
             throw new UnauthorizedAccessException("Only administrators can create staff accounts");
         }
 
-        // Basic validation
+        // Comprehensive validation
+        if (!ValidationUtil.isValidName(fullName)) {
+            throw new InvalidInputException("Invalid name format. Use letters and spaces only.", "fullName");
+        }
         if (!ValidationUtil.isValidEmail(email)) {
             throw new InvalidInputException("Invalid email format.", "email");
         }
+        if (!ValidationUtil.isValidPhone(phone)) {
+            throw new InvalidInputException("Invalid phone number. Use 10-15 digits.", "phone");
+        }
+        if (!ValidationUtil.isValidAddress(address)) {
+            throw new InvalidInputException("Address must be at least 10 characters.", "address");
+        }
+        if (!ValidationUtil.isValidDateOfBirth(dateOfBirth)) {
+            throw new InvalidInputException("Invalid date of birth. Must be 18+ years old. Format: yyyy-MM-dd", "dateOfBirth");
+        }
+        if (!ValidationUtil.isValidGovtId(governmentId)) {
+            throw new InvalidInputException("Invalid government ID. Use 5-20 alphanumeric characters.", "governmentId");
+        }
+        if (!ValidationUtil.isValidPassword(password)) {
+            throw new InvalidInputException(ValidationUtil.getPasswordRequirements(), "password");
+        }
+        if (department == null || department.trim().isEmpty()) {
+            throw new InvalidInputException("Department is required.", "department");
+        }
+        if (position == null || position.trim().isEmpty()) {
+            throw new InvalidInputException("Position is required.", "position");
+        }
+
         if (usersByEmail.containsKey(email.toLowerCase())) {
             throw new InvalidInputException("An account with this email already exists.", "email");
         }
@@ -412,6 +439,11 @@ public class AuthenticationService {
      * Called at application startup.
      */
     public void loadUsers() {
+        String currentId = (currentUser != null) ? currentUser.getUserId() : null;
+        usersById.clear();
+        usersByEmail.clear();
+        hardcodedUserIds.clear(); // Clear the list before re-adding
+        createDefaultAdmin(); // Re-add hardcoded admins
         List<String> lines = FileHandler.readAllLines(FileHandler.CUSTOMERS_FILE);
         int maxCustId = 1000, maxStaffId = 100, maxAdminId = 10;
 
@@ -477,6 +509,22 @@ public class AuthenticationService {
                 if (parts[13] != null && !parts[13].isEmpty()) user.setCreationDate(parts[13]);
                 if (parts[14] != null && !parts[14].isEmpty()) user.setLastLoginDate(parts[14]);
 
+                // Set subclass-specific fields (stored after common fields)
+                if (user instanceof Customer && parts.length > 16) {
+                    Customer c = (Customer) user;
+                    if (!parts[16].isEmpty()) c.setPrimaryAccountNumber(parts[16]);
+                    if (parts.length > 17) c.setCreditScore(Integer.parseInt(parts[17]));
+                    if (parts.length > 18) c.setEmploymentStatus(parts[18]);
+                    if (parts.length > 19) c.setMonthlyIncome(Double.parseDouble(parts[19]));
+                } else if (user instanceof Staff && parts.length > 16) {
+                    Staff s = (Staff) user;
+                    s.setDepartment(parts[16]);
+                    if (parts.length > 17) s.setPosition(parts[17]);
+                } else if (user instanceof Administrator && parts.length > 16) {
+                    Administrator a = (Administrator) user;
+                    a.setAccessLevel(Integer.parseInt(parts[16]));
+                }
+
                 usersByEmail.put(user.getEmail().toLowerCase(), user);
                 usersById.put(user.getUserId(), user);
 
@@ -489,6 +537,11 @@ public class AuthenticationService {
         Customer.setCustomerCounter(maxCustId);
         Staff.setStaffCounter(maxStaffId);
         Administrator.setAdminCounter(maxAdminId);
+
+        // Update currentUser reference to the new object in memory
+        if (currentId != null) {
+            currentUser = usersById.get(currentId);
+        }
     }
 
     /**
@@ -521,6 +574,7 @@ public class AuthenticationService {
                 "Super Administrator", "superadmin@rajarata.com", "+94771000001",
                 "Rajarata Digital Bank HQ, Colombo, Sri Lanka",
                 "1980-01-01", "SADMIN00001", "Super@123", 3);
+            superAdmin.setUserId("ADMIN-03"); // Fixed ID for Super Admin
             superAdmin.verifyEmail();
             superAdmin.setSecurityQuestion("What is the bank name?", "Rajarata");
             usersByEmail.put("superadmin@rajarata.com", superAdmin);
@@ -535,6 +589,7 @@ public class AuthenticationService {
                 "Full Administrator", "admin@rajarata.com", "+94771000002",
                 "Rajarata Digital Bank HQ, Colombo, Sri Lanka",
                 "1982-06-15", "FADMIN00002", "Admin@123", 2);
+            fullAdmin.setUserId("ADMIN-02"); // Fixed ID for Full Admin
             fullAdmin.verifyEmail();
             fullAdmin.setSecurityQuestion("What is the bank name?", "Rajarata");
             usersByEmail.put("admin@rajarata.com", fullAdmin);
@@ -549,6 +604,7 @@ public class AuthenticationService {
                 "Basic Administrator", "basicadmin@rajarata.com", "+94771000003",
                 "Rajarata Digital Bank HQ, Colombo, Sri Lanka",
                 "1985-03-20", "BADMIN00003", "Basic@123", 1);
+            basicAdmin.setUserId("ADMIN-01"); // Fixed ID for Basic Admin
             basicAdmin.verifyEmail();
             basicAdmin.setSecurityQuestion("What is the bank name?", "Rajarata");
             usersByEmail.put("basicadmin@rajarata.com", basicAdmin);
@@ -556,10 +612,6 @@ public class AuthenticationService {
             hardcodedUserIds.add(basicAdmin.getUserId());
         }
 
-        System.out.println("  Admin accounts loaded (hardcoded):");
-        System.out.println("    Level 3 (Super):  superadmin@rajarata.com / Super@123");
-        System.out.println("    Level 2 (Full):   admin@rajarata.com     / Admin@123");
-        System.out.println("    Level 1 (Basic):  basicadmin@rajarata.com / Basic@123");
     }
 
     // ==================== GETTERS ====================
@@ -595,3 +647,4 @@ public class AuthenticationService {
         return null;
     }
 }
+

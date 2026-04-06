@@ -9,15 +9,19 @@ import com.rajarata.bank.utils.DateUtil;
  * - Interest Rate: 5.5% per annum (locked for minimum duration)
  * - Minimum Deposit: $5000
  * - Lock-in Period: 6, 12, 24, or 36 months
- * - Early Withdrawal Penalty: 2% of principal amount
+ * - Early Withdrawal Penalty: 2.00% of principal amount
  * - No regular withdrawals until maturity
  * 
- * OOP Concept: Inheritance - Extends Account abstract class.
+ * OOP Concept: Inheritance - Extends the abstract Account class, inheriting common
+ * banking functionality and data structures.
  * 
- * OOP Concept: Polymorphism - Overrides withdraw() to prevent access before
- * maturity, and calculateInterest() for compound interest.
+ * OOP Concept: Polymorphism - Overrides the withdraw() method to implement
+ * maturity-locked logic and customizes calculateInterest() for compound returns.
  * 
- * @author Rajarata Digital Bank Development Team
+ * OOP Concept: Encapsulation - Manages principal amount, maturity dates, and
+ * lock-in status through private fields and public accessors.
+ * 
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class FixedDepositAccount extends Account {
@@ -69,8 +73,10 @@ public class FixedDepositAccount extends Account {
 
         // Validate minimum deposit
         if (depositAmount < MIN_DEPOSIT_AMOUNT) {
+            String sym = com.rajarata.bank.utils.CurrencyUtil.getCurrencySymbol(currency);
             throw new InvalidAccountException(
-                "Fixed deposit requires minimum $" + MIN_DEPOSIT_AMOUNT, getAccountNumber());
+                "Fixed deposit requires minimum " + sym + " " + com.rajarata.bank.utils.ValidationUtil.formatAmount(MIN_DEPOSIT_AMOUNT), 
+                getAccountNumber());
         }
 
         // Validate lock-in period
@@ -181,9 +187,10 @@ public class FixedDepositAccount extends Account {
             double totalAvailable = getBalance() - penalty;
 
             if (amount > totalAvailable) {
+                String sym = com.rajarata.bank.utils.CurrencyUtil.getCurrencySymbol(getCurrency());
                 throw new InsufficientFundsException(
-                    "Insufficient funds after early withdrawal penalty ($" + 
-                    String.format("%.2f", penalty) + ")",
+                    "Insufficient funds after early withdrawal penalty (" + sym + " " + 
+                    com.rajarata.bank.utils.ValidationUtil.formatAmount(penalty) + ")",
                     getAccountNumber(), amount, totalAvailable);
             }
 
@@ -250,17 +257,18 @@ public class FixedDepositAccount extends Account {
      */
     public String getFDSummary() {
         StringBuilder sb = new StringBuilder();
+        String sym = com.rajarata.bank.utils.CurrencyUtil.getCurrencySymbol(getCurrency());
         sb.append("\n═══ Fixed Deposit Details ═══\n");
-        sb.append(String.format("Principal      : $%,.2f\n", principalAmount));
-        sb.append(String.format("Interest Rate  : %.1f%% p.a.\n", ANNUAL_INTEREST_RATE * 100));
+        sb.append(String.format("Principal      : %s %,.2f\n", sym, principalAmount));
+        sb.append(String.format("Interest Rate  : %.2f%% p.a.\n", ANNUAL_INTEREST_RATE * 100));
         sb.append(String.format("Lock-in Period : %d months\n", lockInMonths));
         sb.append(String.format("Maturity Date  : %s\n", maturityDate));
         sb.append(String.format("Matured        : %s\n", matured ? "Yes" : "No"));
-        sb.append(String.format("Expected Interest: $%,.2f\n", calculateInterest()));
-        sb.append(String.format("Expected Total   : $%,.2f\n", principalAmount + calculateInterest()));
+        sb.append(String.format("Expected Interest: %s %,.2f\n", sym, calculateInterest()));
+        sb.append(String.format("Expected Total   : %s %,.2f\n", sym, principalAmount + calculateInterest()));
         if (!matured) {
-            sb.append(String.format("Early Withdrawal Penalty: $%,.2f\n", 
-                principalAmount * EARLY_WITHDRAWAL_PENALTY_RATE));
+            sb.append(String.format("Early Withdrawal Penalty: %s %,.2f\n", 
+                sym, principalAmount * EARLY_WITHDRAWAL_PENALTY_RATE));
         }
         sb.append("═════════════════════════════\n");
         return sb.toString();
@@ -310,3 +318,4 @@ public class FixedDepositAccount extends Account {
                 String.valueOf(matured));
     }
 }
+

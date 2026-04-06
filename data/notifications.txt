@@ -1,25 +1,50 @@
-NOTIF-000001|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|$1,000.00 deposited to RDB1001-0002. New balance: $6,000.00|2026-04-05 11:13:55|false
-NOTIF-000002|CUST-1001|TRANSACTION_FAILED|Withdrawal Failed|Failed to withdraw $70,000.00 from RDB1001-0002. Reason: Insufficient funds for withdrawal|2026-04-05 11:14:48|false
-NOTIF-000003|CUST-1001|TRANSACTION_SUCCESS|Withdrawal Successful|$100.00 withdrawn from RDB1001-0002. New balance: $5,900.00|2026-04-05 22:03:27|false
-NOTIF-000004|CUST-1001|TRANSACTION_SUCCESS|Withdrawal Successful|$250.00 withdrawn from RDB1001-0002. New balance: $5,650.00|2026-04-05 22:03:56|false
-NOTIF-000005|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|$2,000.00 deposited to RDB1001-0002. New balance: $7,650.00|2026-04-05 22:04:11|false
-NOTIF-000006|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|$100.00 deposited to RDB1001-0002. New balance: $7,750.00|2026-04-05 22:05:41|false
-NOTIF-000007|CUST-1001|TRANSACTION_SUCCESS|Withdrawal Successful|$100.00 withdrawn from RDB1001-0002. New balance: $7,650.00|2026-04-05 22:05:48|false
-NOTIF-000008|CUST-1001|TRANSACTION_SUCCESS|Withdrawal Successful|$100.00 withdrawn from RDB1001-0016. New balance: $9,700.00|2026-04-05 22:12:54|false
-NOTIF-000009|ADMIN-13|FRAUD_ALERT|Suspicious Activity Detected|Case FRAUD-000001: Account locked after 3 consecutive failed login attempts from email: testuser@gmail.com on account N/A|2026-04-05 22:34:43|false
-NOTIF-000010|ADMIN-11|FRAUD_ALERT|Suspicious Activity Detected|Case FRAUD-000001: Account locked after 3 consecutive failed login attempts from email: testuser@gmail.com on account N/A|2026-04-05 22:34:43|false
-NOTIF-000011|ADMIN-12|FRAUD_ALERT|Suspicious Activity Detected|Case FRAUD-000001: Account locked after 3 consecutive failed login attempts from email: testuser@gmail.com on account N/A|2026-04-05 22:34:43|false
-NOTIF-000012|STAFF-101|FRAUD_ALERT|Suspicious Activity Detected|Case FRAUD-000001: Account locked after 3 consecutive failed login attempts from email: testuser@gmail.com on account N/A|2026-04-05 22:34:43|false
-NOTIF-000013|CUST-1002|SECURITY_ALERT|Account Locked — Security Alert|Your account has been locked after 3 failed login attempts. If this was not you, contact the bank immediately.|2026-04-05 22:34:43|false
-NOTIF-000014|ADMIN-13|FRAUD_ALERT|Account Lockout Alert|User CUST-1002 (testuser@gmail.com) account locked after 3 failed login attempts.|2026-04-05 22:34:43|false
-NOTIF-000015|ADMIN-11|FRAUD_ALERT|Account Lockout Alert|User CUST-1002 (testuser@gmail.com) account locked after 3 failed login attempts.|2026-04-05 22:34:43|false
-NOTIF-000016|ADMIN-12|FRAUD_ALERT|Account Lockout Alert|User CUST-1002 (testuser@gmail.com) account locked after 3 failed login attempts.|2026-04-05 22:34:43|false
-NOTIF-000017|STAFF-101|FRAUD_ALERT|Account Lockout Alert|User CUST-1002 (testuser@gmail.com) account locked after 3 failed login attempts.|2026-04-05 22:34:43|false
-NOTIF-000018|ADMIN-13|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000001 from Test User - $10,000.00|2026-04-05 22:39:44|false
-NOTIF-000019|ADMIN-11|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000001 from Test User - $10,000.00|2026-04-05 22:39:44|false
-NOTIF-000020|ADMIN-12|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000001 from Test User - $10,000.00|2026-04-05 22:39:44|false
-NOTIF-000021|STAFF-101|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000001 from Test User - $10,000.00|2026-04-05 22:39:44|false
-NOTIF-000022|CUST-1002|TRANSFER_SUCCESS|Transfer Sent|$500.00 USD transferred from RDB1002-0018 to RDB1002-0017. New balance: $1,500.00|2026-04-05 22:41:57|false
-NOTIF-000023|CUST-1002|TRANSFER_SUCCESS|Transfer Received|$500.00 received from RDB1002-0018. New balance: $1,500.00|2026-04-05 22:41:57|false
-NOTIF-000024|CUST-1002|LOAN_STATUS_UPDATE|Loan Approved!|Your loan LOAN-000001 for $10,000.00 has been approved. Funds disbursed to RDB1002-0017|2026-04-05 22:52:02|false
-NOTIF-000025|CUST-1002|TRANSACTION_SUCCESS|Deposit Successful|$500.00 deposited to RDB1002-0019. New balance: $1,000.00|2026-04-05 23:12:58|false
+NOTIF-000001|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|LKR 2,500.00 deposited to RDB1001-0002. New balance: LKR 3,500.00|2026-04-06 09:31:51|true
+NOTIF-000002|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|LKR 5,000.00 deposited to RDB1001-0001. New balance: LKR 30,000.00|2026-04-06 09:32:33|true
+NOTIF-000003|CUST-1001|TRANSACTION_SUCCESS|Withdrawal Successful|LKR 500.00 withdrawn from RDB1001-0002. New balance: LKR 3,000.00|2026-04-06 09:33:20|true
+NOTIF-000004|CUST-1001|TRANSACTION_SUCCESS|Withdrawal Successful|LKR 3,000.00 withdrawn from RDB1001-0001. New balance: LKR 27,000.00|2026-04-06 09:33:49|true
+NOTIF-000005|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Failed to transfer LKR 70,000.00 from RDB1001-0001. Reason: Insufficient funds for withdrawal|2026-04-06 09:34:52|true
+NOTIF-000006|CUST-1001|TRANSFER_SUCCESS|Transfer Sent|7,000.00 LKR transferred from RDB1001-0001 to RDB1001-0002. New balance: LKR 20,000.00|2026-04-06 09:35:10|true
+NOTIF-000007|CUST-1001|TRANSFER_SUCCESS|Transfer Received|7,000.00 LKR received from RDB1001-0001. New balance: LKR 10,000.00|2026-04-06 09:35:10|true
+NOTIF-000008|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|LKR 5,000.00 deposited to RDB1001-0001. New balance: LKR 25,000.00|2026-04-06 10:13:00|true
+NOTIF-000009|CUST-1001|TRANSFER_SUCCESS|Transfer Sent|100.00 USD transferred to RDB1001-0001 (31,889.75 LKR received, fee: 160.25 LKR). New balance: USD 4,800.00|2026-04-06 11:19:45|true
+NOTIF-000010|CUST-1001|TRANSFER_SUCCESS|Transfer Received|31,889.75 LKR received from RDB1001-0003. New balance: LKR 56,889.75|2026-04-06 11:19:45|true
+NOTIF-000011|CUST-1001|TRANSACTION_SUCCESS|Withdrawal Successful|LKR 6,000.00 withdrawn from RDB1001-0001. New balance: LKR 50,889.75|2026-04-06 11:21:36|true
+NOTIF-000012|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|LKR 111.25 deposited to RDB1001-0001. New balance: LKR 51,001.00|2026-04-06 11:22:12|true
+NOTIF-000014|CUST-1001|TRANSFER_SUCCESS|Transfer Received|500.00 LKR received from RDB1002-0004. New balance: LKR 51,501.00|2026-04-06 11:35:52|true
+NOTIF-000015|CUST-1001|TRANSFER_SUCCESS|Transfer Sent|5,000.00 LKR transferred to RDB1002-0004. New balance: LKR 46,501.00|2026-04-06 11:37:21|true
+NOTIF-000017|CUST-1001|TRANSACTION_SUCCESS|Withdrawal Successful|LKR 6,501.00 withdrawn from RDB1001-0001. New balance: LKR 40,000.00|2026-04-06 11:43:39|true
+NOTIF-000021|CUST-1001|LOAN_STATUS_UPDATE|Loan Approved!|Your loan LOAN-000001 for $100,000.00 has been approved. Funds disbursed to RDB1001-0001|2026-04-06 11:55:42|true
+NOTIF-000026|CUST-1001|LOAN_STATUS_UPDATE|Loan Approved!|Your loan LOAN-000002 for $1,000,000.00 has been approved. Funds disbursed to RDB1001-0001|2026-04-06 14:19:09|true
+NOTIF-000027|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|LKR 1,000.00 deposited to RDB1001-0002. New balance: LKR 11,000.00|2026-04-06 15:02:03|true
+NOTIF-000028|CUST-1001|TRANSACTION_FAILED|Withdrawal Failed|Failed to withdraw LKR 1,000.00 from RDB1001-0001. Reason: Cannot withdraw from Suspended account|2026-04-06 15:04:04|true
+NOTIF-000029|CUST-1001|TRANSACTION_FAILED|Withdrawal Failed|Failed to withdraw LKR 1,000.00 from RDB1001-0001. Reason: Cannot withdraw from Suspended account|2026-04-06 15:04:06|true
+NOTIF-000030|CUST-1001|TRANSACTION_FAILED|Withdrawal Failed|Failed to withdraw LKR 1,000.00 from RDB1001-0001. Reason: Cannot withdraw from Suspended account|2026-04-06 15:04:06|true
+NOTIF-000031|CUST-1001|TRANSACTION_FAILED|Withdrawal Failed|Failed to withdraw LKR 1,000.00 from RDB1001-0001. Reason: Cannot withdraw from Suspended account|2026-04-06 15:04:06|true
+NOTIF-000032|CUST-1001|TRANSACTION_FAILED|Withdrawal Failed|Failed to withdraw LKR 1,000.00 from RDB1001-0001. Reason: Cannot withdraw from Suspended account|2026-04-06 15:04:06|true
+NOTIF-000033|CUST-1001|TRANSACTION_FAILED|Withdrawal Failed|Failed to withdraw LKR 1,000.00 from RDB1001-0001. Reason: Cannot withdraw from Suspended account|2026-04-06 15:04:06|true
+NOTIF-000034|CUST-1001|TRANSACTION_FAILED|Withdrawal Failed|Failed to withdraw LKR 1,000.00 from RDB1001-0001. Reason: Cannot withdraw from Suspended account|2026-04-06 15:04:06|true
+NOTIF-000035|CUST-1001|TRANSACTION_SUCCESS|Deposit Successful|LKR 10,000.00 deposited to RDB1001-0002. New balance: LKR 21,000.00|2026-04-06 15:04:21|true
+NOTIF-000036|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot deposit to Closed account|2026-04-06 15:05:10|true
+NOTIF-000037|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:38|true
+NOTIF-000038|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:38|true
+NOTIF-000039|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:38|true
+NOTIF-000040|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:38|true
+NOTIF-000041|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:39|true
+NOTIF-000042|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:39|true
+NOTIF-000043|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:39|true
+NOTIF-000044|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:39|true
+NOTIF-000045|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:39|true
+NOTIF-000046|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:39|true
+NOTIF-000047|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:40|true
+NOTIF-000048|CUST-1001|TRANSACTION_FAILED|Transfer Failed|Transfer of LKR 1,000.00 failed. Reason: Cannot withdraw from Suspended account|2026-04-06 15:05:40|true
+NOTIF-000053|CUST-1001|LOAN_STATUS_UPDATE|Loan Approved!|Your loan LOAN-000003 for $100,000.00 has been approved. Funds disbursed to RDB1001-0001|2026-04-06 16:23:11|true
+NOTIF-000013|CUST-1002|TRANSFER_SUCCESS|Transfer Sent|500.00 LKR transferred to RDB1001-0001. New balance: LKR 500.00|2026-04-06 11:35:52|false
+NOTIF-000016|CUST-1002|TRANSFER_SUCCESS|Transfer Received|5,000.00 LKR received from RDB1001-0001. New balance: LKR 5,500.00|2026-04-06 11:37:21|false
+NOTIF-000022|ADMIN-02|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000002 from Test User - $1,000,000.00|2026-04-06 14:17:38|true
+NOTIF-000049|ADMIN-02|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000003 from Test User - $100,000.00|2026-04-06 16:21:21|true
+NOTIF-000023|ADMIN-03|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000002 from Test User - $1,000,000.00|2026-04-06 14:17:38|false
+NOTIF-000050|ADMIN-03|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000003 from Test User - $100,000.00|2026-04-06 16:21:21|false
+NOTIF-000024|ADMIN-01|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000002 from Test User - $1,000,000.00|2026-04-06 14:17:38|false
+NOTIF-000051|ADMIN-01|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000003 from Test User - $100,000.00|2026-04-06 16:21:21|false
+NOTIF-000025|STAFF-101|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000002 from Test User - $1,000,000.00|2026-04-06 14:17:38|true
+NOTIF-000052|STAFF-101|LOAN_STATUS_UPDATE|New Loan Application|Loan LOAN-000003 from Test User - $100,000.00|2026-04-06 16:21:21|true

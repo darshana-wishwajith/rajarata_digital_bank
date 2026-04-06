@@ -20,7 +20,7 @@ import java.util.List;
  * OOP Concept: Static Members - File paths are defined as static constants,
  * methods are static for stateless access.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public final class FileHandler {
@@ -329,3 +329,4 @@ public final class FileHandler {
         return readAllLines(filePath).size();
     }
 }
+

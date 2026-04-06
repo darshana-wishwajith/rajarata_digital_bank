@@ -10,7 +10,7 @@ package com.rajarata.bank.models.user;
  * OOP Concept: Polymorphism - Overrides getRole() and getDashboardMenu()
  * to provide staff-specific behavior.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class Staff extends User {
@@ -100,6 +100,17 @@ public class Staff extends User {
         return sb.toString();
     }
 
+    /**
+     * Serializes the staff to a delimited string.
+     * Overrides User.toFileString() to add staff-specific fields.
+     */
+    @Override
+    public String toFileString() {
+        return super.toFileString() + "|" + 
+               (department != null ? department : "") + "|" +
+               (position != null ? position : "");
+    }
+
     // ==================== STATIC METHODS ====================
 
     /**
@@ -136,3 +147,4 @@ public class Staff extends User {
     /** @param position The position to set */
     public void setPosition(String position) { this.position = position; }
 }
+

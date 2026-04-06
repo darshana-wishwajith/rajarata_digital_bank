@@ -6,7 +6,7 @@ package com.rajarata.bank.models.transaction;
  * OOP Concept: Abstraction - Using enums to represent a fixed set of transaction
  * categories, providing type safety and preventing invalid transaction types.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public enum TransactionType {
@@ -50,3 +50,4 @@ public enum TransactionType {
         return displayName;
     }
 }
+

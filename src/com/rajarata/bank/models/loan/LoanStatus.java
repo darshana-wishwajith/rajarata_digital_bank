@@ -3,7 +3,7 @@ package com.rajarata.bank.models.loan;
 /**
  * Enumeration representing the lifecycle status of a loan.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public enum LoanStatus {
@@ -37,3 +37,4 @@ public enum LoanStatus {
         return displayName;
     }
 }
+

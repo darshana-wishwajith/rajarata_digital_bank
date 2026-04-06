@@ -4,7 +4,7 @@ package com.rajarata.bank.exceptions;
  * Custom exception thrown when user input fails validation.
  * Covers invalid formats, out-of-range values, and malformed data.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class InvalidInputException extends Exception {
@@ -34,3 +34,4 @@ public class InvalidInputException extends Exception {
     /** @return The field name with invalid input */
     public String getFieldName() { return fieldName; }
 }
+

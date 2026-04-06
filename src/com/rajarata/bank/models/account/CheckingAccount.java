@@ -8,14 +8,14 @@ import com.rajarata.bank.exceptions.InvalidAccountException;
  * - Interest Rate: 0.5% per annum
  * - No minimum balance requirement
  * - Unlimited withdrawals
- * - Overdraft protection: Up to $1000 with 15% interest on overdraft amount
+ * - Overdraft protection: Up to 100,000 LKR with 15% interest on overdraft amount
  * 
  * OOP Concept: Inheritance - Extends abstract Account class.
  * 
  * OOP Concept: Polymorphism - Overrides canWithdraw() to implement overdraft
  * logic, and calculateInterest() for checking-specific interest rate.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class CheckingAccount extends Account {
@@ -25,7 +25,7 @@ public class CheckingAccount extends Account {
 
     /** Annual interest rate for checking accounts */
     private static final double ANNUAL_INTEREST_RATE = 0.005;       // 0.5%
-    /** Maximum overdraft amount allowed (about $300 in LKR) */
+    /** Maximum overdraft amount allowed (100,000 LKR) */
     private static final double OVERDRAFT_LIMIT = 100000.0;
     /** Interest rate charged on overdraft amount */
     private static final double OVERDRAFT_INTEREST_RATE = 0.15;     // 15%
@@ -86,8 +86,7 @@ public class CheckingAccount extends Account {
     }
 
     /**
-     * {@inheritDoc}
-     * @return $1000 overdraft limit
+     * @return 100,000 LKR overdraft limit
      */
     @Override
     public double getOverdraftLimit() {
@@ -142,7 +141,7 @@ public class CheckingAccount extends Account {
 
     /**
      * {@inheritDoc}
-     * Checking account allows withdrawal up to balance + overdraft limit.
+     * Checking account allows withdrawal up to balance + 100,000 LKR overdraft limit.
      * 
      * OOP Concept: Polymorphism - Overrides base class to add overdraft logic.
      */
@@ -193,3 +192,4 @@ public class CheckingAccount extends Account {
     /** @param overdraftUsed The overdraft used amount to set */
     public void setOverdraftUsed(double overdraftUsed) { this.overdraftUsed = overdraftUsed; }
 }
+

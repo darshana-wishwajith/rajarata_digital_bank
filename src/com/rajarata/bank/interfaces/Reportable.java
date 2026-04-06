@@ -7,7 +7,7 @@ package com.rajarata.bank.interfaces;
  * OOP Concept: Abstraction - Defines a contract for report generation
  * that can be implemented differently by accounts, customers, or system modules.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public interface Reportable {
@@ -28,3 +28,4 @@ public interface Reportable {
      */
     String generateDetailedReport(String startDate, String endDate);
 }
+

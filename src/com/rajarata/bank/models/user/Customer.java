@@ -17,7 +17,7 @@ import java.util.List;
  * OOP Concept: Polymorphism - Overrides getRole() and getDashboardMenu()
  * to provide customer-specific behavior.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class Customer extends User {
@@ -122,6 +122,19 @@ public class Customer extends User {
         sb.append("║  0. Logout                               ║\n");
         sb.append("╚══════════════════════════════════════════╝\n");
         return sb.toString();
+    }
+
+    /**
+     * Serializes the customer to a delimited string.
+     * Overrides User.toFileString() to add customer-specific fields.
+     */
+    @Override
+    public String toFileString() {
+        return super.toFileString() + "|" + 
+               (primaryAccountNumber != null ? primaryAccountNumber : "") + "|" +
+               creditScore + "|" +
+               (employmentStatus != null ? employmentStatus : "") + "|" +
+               monthlyIncome;
     }
 
     // ==================== ACCOUNT MANAGEMENT ====================
@@ -336,3 +349,4 @@ public class Customer extends User {
     /** @param monthlyIncome The monthly income to set */
     public void setMonthlyIncome(double monthlyIncome) { this.monthlyIncome = monthlyIncome; }
 }
+

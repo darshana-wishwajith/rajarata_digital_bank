@@ -10,7 +10,7 @@ import javafx.stage.Stage;
  * JavaFX Application entry point for Rajarata Digital Bank.
  * Initializes the bank singleton, sets up the stage, and shows the login screen.
  *
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class BankApplication extends Application {
@@ -56,3 +56,4 @@ public class BankApplication extends Application {
         launch(args);
     }
 }
+

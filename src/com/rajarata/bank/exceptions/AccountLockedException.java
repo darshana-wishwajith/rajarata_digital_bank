@@ -4,7 +4,7 @@ package com.rajarata.bank.exceptions;
  * Custom exception thrown when an account is locked due to
  * excessive failed login attempts or administrative action.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class AccountLockedException extends Exception {
@@ -34,3 +34,4 @@ public class AccountLockedException extends Exception {
     /** @return The username of the locked account */
     public String getUsername() { return username; }
 }
+

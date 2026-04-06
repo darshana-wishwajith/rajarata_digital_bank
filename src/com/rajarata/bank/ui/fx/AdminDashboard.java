@@ -1,11 +1,14 @@
 package com.rajarata.bank.ui.fx;
 
 import com.rajarata.bank.Bank;
-import com.rajarata.bank.models.user.*;
+import com.rajarata.bank.models.user.User;
+import com.rajarata.bank.models.user.Administrator;
 import com.rajarata.bank.exceptions.*;
 import com.rajarata.bank.utils.ValidationUtil;
-import com.rajarata.bank.utils.EncryptionUtil;
 import javafx.collections.FXCollections;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.util.Duration;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -18,11 +21,13 @@ import java.util.Map;
 public class AdminDashboard {
 
     private final ScreenManager screenManager;
-    private final Administrator admin;
+    private Administrator admin;
     private final Bank bank;
     private final BorderPane root;
     private final StackPane contentArea;
     private VBox sidebarBtnContainer;
+    private int currentMenuIndex = 0;
+    private Timeline refreshTimer;
 
     public AdminDashboard(ScreenManager screenManager, Administrator admin) {
         this.screenManager = screenManager;
@@ -31,6 +36,33 @@ public class AdminDashboard {
         this.contentArea = new StackPane();
         this.root = buildUI();
         showOverview();
+        startAutoRefresh();
+    }
+
+    private void startAutoRefresh() {
+        refreshTimer = new Timeline(new KeyFrame(Duration.minutes(5), e -> {
+            refreshNow();
+        }));
+        refreshTimer.setCycleCount(Timeline.INDEFINITE);
+        refreshTimer.play();
+    }
+
+    private void refreshNow() {
+        if (root.getScene() != null && root.getScene().getWindow() != null && root.getScene().getWindow().isShowing()) {
+            bank.refreshAllData();
+            // Refresh admin reference
+            User updated = bank.getAuthService().getUserById(this.admin.getUserId());
+            if (updated instanceof Administrator) {
+                this.admin = (Administrator) updated;
+                handleMenuClick(currentMenuIndex);
+            }
+        }
+    }
+
+    public void stopAutoRefresh() {
+        if (refreshTimer != null) {
+            refreshTimer.stop();
+        }
     }
 
     private BorderPane buildUI() {
@@ -47,13 +79,24 @@ public class AdminDashboard {
         sub.getStyleClass().add("sidebar-subtitle");
         header.getChildren().addAll(bankName, sub);
 
+        // User info & Refresh
+        VBox userInfoContainer = new VBox(10);
+        userInfoContainer.getStyleClass().add("sidebar-user-info");
+        
         VBox userInfo = new VBox(2);
-        userInfo.getStyleClass().add("sidebar-user-info");
         Label userName = new Label(admin.getFullName());
         userName.getStyleClass().add("sidebar-username");
         Label userRole = new Label("Admin • Level " + admin.getAccessLevel());
         userRole.getStyleClass().add("sidebar-role");
         userInfo.getChildren().addAll(userName, userRole);
+        
+        Button manualRefreshBtn = new Button("🔄 Sync Now");
+        manualRefreshBtn.getStyleClass().add("btn-sidebar-refresh");
+        manualRefreshBtn.setMaxWidth(Double.MAX_VALUE);
+        manualRefreshBtn.setOnAction(e -> refreshNow());
+        
+        userInfoContainer.getChildren().addAll(userInfo, manualRefreshBtn);
+        userInfoContainer.setPadding(new Insets(10, 15, 10, 15));
 
         sidebarBtnContainer = new VBox();
         String[][] menuItems = {
@@ -78,13 +121,20 @@ public class AdminDashboard {
             sidebarBtnContainer.getChildren().add(btn);
         }
 
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
+        // Scrollable area
+        VBox scrollContent = new VBox();
+        scrollContent.getChildren().addAll(userInfoContainer, sidebarBtnContainer);
+        
+        ScrollPane sidebarScroll = new ScrollPane(scrollContent);
+        sidebarScroll.setFitToWidth(true);
+        sidebarScroll.getStyleClass().add("sidebar-scroll");
+        VBox.setVgrow(sidebarScroll, Priority.ALWAYS);
+
         Button logoutBtn = new Button("🚪  Logout");
         logoutBtn.getStyleClass().add("sidebar-logout-btn");
         logoutBtn.setOnAction(e -> screenManager.logout());
 
-        sidebar.getChildren().addAll(header, userInfo, sidebarBtnContainer, spacer, logoutBtn);
+        sidebar.getChildren().addAll(header, sidebarScroll, logoutBtn);
 
         ScrollPane scrollable = new ScrollPane(contentArea);
         scrollable.setFitToWidth(true);
@@ -104,6 +154,7 @@ public class AdminDashboard {
             btn.getStyleClass().removeAll("sidebar-btn-active");
             if (i == index) btn.getStyleClass().add("sidebar-btn-active");
         }
+        currentMenuIndex = index;
         switch (index) {
             case 0: showOverview(); break;
             case 1: showAllUsers(); break;
@@ -158,7 +209,7 @@ public class AdminDashboard {
         title.getStyleClass().add("page-title");
 
         TableView<User> table = new TableView<>();
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<User, String> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(cd.getValue().getUserId()));
@@ -172,7 +223,11 @@ public class AdminDashboard {
         statusCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(
                 cd.getValue().isAccountLocked() ? "LOCKED" : "Active"));
 
-        table.getColumns().addAll(idCol, nameCol, emailCol, roleCol, statusCol);
+        table.getColumns().add(idCol);
+        table.getColumns().add(nameCol);
+        table.getColumns().add(emailCol);
+        table.getColumns().add(roleCol);
+        table.getColumns().add(statusCol);
         table.setItems(FXCollections.observableArrayList(
             bank.getAuthService().getAllUsersById().values()
         ));
@@ -189,14 +244,14 @@ public class AdminDashboard {
 
         VBox form = new VBox(14);
         form.getStyleClass().add("card");
-        form.setMaxWidth(500);
+        form.setMaxWidth(600);
 
         TextField nameField = createField("Full Name");
         TextField emailField = createField("Email");
         TextField phoneField = createField("Phone");
         TextField addressField = createField("Address");
-        TextField dobField = createField("Date of Birth (yyyy-MM-dd)");
-        TextField govIdField = createField("Government ID");
+        TextField dobField = createField("DOB (yyyy-MM-dd)");
+        TextField govIdField = createField("Govt ID");
         PasswordField pwdField = new PasswordField();
         pwdField.setPromptText("Password");
         pwdField.setPrefHeight(38);
@@ -213,13 +268,37 @@ public class AdminDashboard {
         createBtn.setMaxWidth(Double.MAX_VALUE);
         createBtn.setOnAction(e -> {
             try {
-                Staff newStaff = bank.getAuthService().createStaffAccount(
-                        nameField.getText(), emailField.getText(), phoneField.getText(),
-                        addressField.getText(), dobField.getText(), govIdField.getText(),
-                        pwdField.getText(), deptField.getText(), posField.getText());
-                resultLabel.setText("✓ Staff account created! ID: " + newStaff.getUserId());
+                String name = nameField.getText().trim();
+                String email = emailField.getText().trim();
+                String phone = phoneField.getText().trim();
+                String address = addressField.getText().trim();
+                String dob = dobField.getText().trim();
+                String govId = govIdField.getText().trim();
+                String pwd = pwdField.getText();
+                String dept = deptField.getText().trim();
+                String pos = posField.getText().trim();
+
+                // Validation
+                if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty() || 
+                    dob.isEmpty() || govId.isEmpty() || pwd.isEmpty() || dept.isEmpty() || pos.isEmpty()) {
+                    throw new Exception("All fields are required.");
+                }
+                if (!ValidationUtil.isValidEmail(email)) throw new Exception("Invalid email format.");
+                if (!ValidationUtil.isValidPhone(phone)) throw new Exception("Invalid phone format.");
+                if (!ValidationUtil.isValidDateOfBirth(dob)) throw new Exception("Invalid DOB. Must be 18+ and format yyyy-MM-dd.");
+                if (!ValidationUtil.isValidGovtId(govId)) throw new Exception("Invalid Government ID.");
+                if (!ValidationUtil.isValidPassword(pwd)) throw new Exception(ValidationUtil.getPasswordRequirements());
+
+                bank.getAuthService().createStaffAccount(name, email, phone, address, dob, govId, pwd, dept, pos);
+                bank.refreshAllData(); // Immediate sync
+
+                resultLabel.setText("✓ Staff account created successfully.");
                 resultLabel.getStyleClass().setAll("alert-success");
                 resultLabel.setVisible(true);
+                // Clear fields
+                nameField.clear(); emailField.clear(); phoneField.clear();
+                addressField.clear(); dobField.clear(); govIdField.clear();
+                pwdField.clear(); deptField.clear(); posField.clear();
             } catch (Exception ex) {
                 resultLabel.setText("⚠ " + ex.getMessage());
                 resultLabel.getStyleClass().setAll("alert-error");
@@ -266,6 +345,7 @@ public class AdminDashboard {
         lockBtn.setOnAction(e -> {
             try {
                 boolean ok = bank.getAuthService().lockUser(userIdField.getText());
+                if (ok) bank.refreshAllData(); // Immediate sync
                 resultLabel.setText(ok ? "✓ Account locked." : "⚠ User not found.");
                 resultLabel.getStyleClass().setAll(ok ? "alert-success" : "alert-error");
                 resultLabel.setVisible(true);
@@ -281,6 +361,7 @@ public class AdminDashboard {
         unlockBtn.setOnAction(e -> {
             try {
                 boolean ok = bank.getAuthService().unlockUser(userIdField.getText());
+                if (ok) bank.refreshAllData(); // Immediate sync
                 resultLabel.setText(ok ? "✓ Account unlocked." : "⚠ User not found.");
                 resultLabel.getStyleClass().setAll(ok ? "alert-success" : "alert-error");
                 resultLabel.setVisible(true);
@@ -322,18 +403,25 @@ public class AdminDashboard {
         resetBtn.setMaxWidth(Double.MAX_VALUE);
         resetBtn.setOnAction(e -> {
             try {
-                boolean ok = bank.getAuthService().resetUserPassword(userIdField.getText(), newPwdField.getText());
-                resultLabel.setText(ok ? "✓ Password reset and account unlocked." : "⚠ User not found.");
+                boolean ok = bank.getAuthService().resetUserPassword(
+                    userIdField.getText(), 
+                    newPwdField.getText());
+                if (ok) bank.refreshAllData(); // Immediate sync
+                resultLabel.setText(ok ? "✓ Password reset successfully." : "⚠ User not found.");
                 resultLabel.getStyleClass().setAll(ok ? "alert-success" : "alert-error");
                 resultLabel.setVisible(true);
-            } catch (UnauthorizedAccessException ex) {
-                resultLabel.setText("⚠ " + ex.getMessage());
+            } catch (Exception ex) {
+                resultLabel.setText("⚠ Error: " + ex.getMessage());
                 resultLabel.getStyleClass().setAll("alert-error");
                 resultLabel.setVisible(true);
             }
         });
 
-        form.getChildren().addAll(new Label("User ID"), userIdField, new Label("New Password"), newPwdField, resultLabel, resetBtn);
+        form.getChildren().addAll(
+            new Label("User ID"), userIdField, 
+            new Label("New Password"), newPwdField,
+            resultLabel, resetBtn
+        );
         page.getChildren().addAll(title, form);
         setContent(page);
     }
@@ -360,6 +448,7 @@ public class AdminDashboard {
         freezeBtn.setOnAction(e -> {
             try {
                 bank.getAccountService().suspendAccount(accNumField.getText());
+                bank.refreshAllData(); // Immediate sync
                 resultLabel.setText("✓ Account suspended/frozen successfully.");
                 resultLabel.getStyleClass().setAll("alert-success");
                 resultLabel.setVisible(true);
@@ -375,6 +464,7 @@ public class AdminDashboard {
         unfreezeBtn.setOnAction(e -> {
             try {
                 bank.getAccountService().reactivateAccount(accNumField.getText());
+                bank.refreshAllData(); // Immediate sync
                 resultLabel.setText("✓ Account reactivated successfully.");
                 resultLabel.getStyleClass().setAll("alert-success");
                 resultLabel.setVisible(true);
@@ -559,18 +649,39 @@ public class AdminDashboard {
             if (notifications == null || notifications.isEmpty()) {
                 page.getChildren().add(new Label("No notifications."));
             } else {
-                for (var n : notifications) {
+                Button markAllBtn = new Button("Mark All as Read");
+                markAllBtn.getStyleClass().add("btn-secondary");
+                markAllBtn.setOnAction(e -> {
+                    bank.getNotificationService().markAllAsRead(admin.getUserId());
+                    showNotifications();
+                });
+                page.getChildren().add(markAllBtn);
+
+                for (int i = notifications.size() - 1; i >= 0; i--) {
+                    var n = notifications.get(i);
                     HBox item = new HBox(12);
                     item.getStyleClass().add("card");
+                    item.setAlignment(Pos.CENTER_LEFT);
                     Label icon = new Label(n.isRead() ? "📧" : "🔔");
                     VBox info = new VBox(2);
                     Label msg = new Label(n.getMessage());
                     msg.setWrapText(true);
+                    msg.setStyle(n.isRead() ? "-fx-text-fill: #7F8C8D;" : "-fx-font-weight: bold;");
                     Label time = new Label(n.getTimestamp());
                     time.setStyle("-fx-text-fill: #B0B8C1; -fx-font-size: 11px;");
                     info.getChildren().addAll(msg, time);
                     HBox.setHgrow(info, Priority.ALWAYS);
+
+                    Button readBtn = new Button("Mark as Read");
+                    readBtn.getStyleClass().add("btn-outline-sm");
+                    final String nid = n.getNotificationId();
+                    readBtn.setOnAction(e -> {
+                        bank.getNotificationService().markAsReadById(admin.getUserId(), nid);
+                        showNotifications();
+                    });
+
                     item.getChildren().addAll(icon, info);
+                    if (!n.isRead()) item.getChildren().add(readBtn);
                     page.getChildren().add(item);
                 }
             }
@@ -629,3 +740,4 @@ public class AdminDashboard {
 
     public BorderPane getRoot() { return root; }
 }
+

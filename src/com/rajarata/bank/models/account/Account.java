@@ -4,10 +4,12 @@ import com.rajarata.bank.interfaces.InterestBearing;
 import com.rajarata.bank.interfaces.Reportable;
 import com.rajarata.bank.interfaces.Transactable;
 import com.rajarata.bank.models.transaction.Transaction;
+import com.rajarata.bank.models.transaction.TransactionType;
 import com.rajarata.bank.exceptions.InsufficientFundsException;
 import com.rajarata.bank.exceptions.InvalidAccountException;
 import com.rajarata.bank.utils.DateUtil;
 import com.rajarata.bank.utils.ValidationUtil;
+import com.rajarata.bank.utils.CurrencyUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -15,23 +17,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Abstract base class representing a bank account.
- * Defines the common structure and behavior shared by all account types.
+ * This is the main abstract class for all bank accounts in our system. 
+ * It manages common things like balance, account number, and transactions.
  * 
- * OOP Concept: Abstraction - This abstract class defines a contract that all
- * concrete account types must fulfil. The method calculateInterest() is abstract,
- * requiring each subclass to define its own interest calculation strategy.
+ * OOP Concepts applied:
+ * 1. Abstraction - This is abstract because we only create specific accounts like Savings.
+ *    The method calculateInterest() is abstract because each account type does it differently.
+ * 2. Inheritance - All accounts like SavingsAccount and CheckingAccount extend this class.
+ * 3. Encapsulation - All fields like balance are private so they can only be changed 
+ *    correctly through methods like deposit() or withdraw().
+ * 4. Polymorphism - We can treat any account as just an 'Account' object throughout the system.
  * 
- * OOP Concept: Inheritance - SavingsAccount, CheckingAccount, StudentAccount,
- * and FixedDepositAccount all extend this class, inheriting common properties.
- * 
- * OOP Concept: Composition - Each Account HAS-A list of Transactions.
- * The transaction lifecycle is managed within the account.
- * 
- * OOP Concept: Encapsulation - All fields are private with controlled access.
- * Balance can only be modified through deposit/withdraw methods.
- * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public abstract class Account implements Transactable, InterestBearing, Reportable {
@@ -210,24 +207,19 @@ public abstract class Account implements Transactable, InterestBearing, Reportab
         return amount <= getAvailableBalance() && amount > 0;
     }
 
-    // ==================== REPORTABLE INTERFACE IMPLEMENTATION ====================
-
-    /**
-     * {@inheritDoc}
-     * Generates a summary report for this account.
-     */
     @Override
     public String generateReport() {
         StringBuilder sb = new StringBuilder();
+        String sym = CurrencyUtil.getCurrencySymbol(currency);
         sb.append("\n═══════════ ACCOUNT REPORT ═══════════\n");
         sb.append(String.format("Account Number : %s\n", accountNumber));
         sb.append(String.format("Account Type   : %s\n", getAccountType()));
         sb.append(String.format("Customer ID    : %s\n", customerId));
         sb.append(String.format("Status         : %s\n", status));
-        sb.append(String.format("Balance        : $%s\n", ValidationUtil.formatAmount(balance)));
+        sb.append(String.format("Balance        : %s %s\n", sym, ValidationUtil.formatAmount(balance)));
         sb.append(String.format("Currency       : %s\n", currency));
         sb.append(String.format("Interest Rate  : %.1f%%\n", getInterestRate() * 100));
-        sb.append(String.format("Interest Earned: $%s\n", ValidationUtil.formatAmount(totalInterestEarned)));
+        sb.append(String.format("Interest Earned: %s %s\n", sym, ValidationUtil.formatAmount(totalInterestEarned)));
         sb.append(String.format("Opened         : %s\n", openDate));
         sb.append(String.format("Transactions   : %d\n", transactionHistory.size()));
         sb.append("══════════════════════════════════════\n");
@@ -236,11 +228,18 @@ public abstract class Account implements Transactable, InterestBearing, Reportab
 
     /**
      * {@inheritDoc}
-     * Generates a detailed report for a date range.
+     * Generates a detailed account report for a specific date range.
+     * 
+     * OOP Concept: Abstraction - Implementation of the Reportable interface method.
+     * 
+     * @param startDate The start date for the report (yyyy-MM-dd)
+     * @param endDate The end date for the report (yyyy-MM-dd)
+     * @return Formatted multi-line report string
      */
     @Override
     public String generateDetailedReport(String startDate, String endDate) {
         StringBuilder sb = new StringBuilder();
+        String sym = CurrencyUtil.getCurrencySymbol(currency);
         sb.append(generateReport());
         sb.append("\nTransactions from " + startDate + " to " + endDate + ":\n");
         sb.append("────────────────────────────────────────\n");
@@ -252,15 +251,15 @@ public abstract class Account implements Transactable, InterestBearing, Reportab
             double totalDeposits = 0, totalWithdrawals = 0;
             for (Transaction txn : filtered) {
                 sb.append(txn.getTransactionSummary()).append("\n");
-                if (txn.getAmount() > 0 && "DEPOSIT".equals(txn.getType().name())) {
+                if (txn.getAmount() > 0 && (txn.getType() == TransactionType.DEPOSIT || txn.getType() == TransactionType.INTEREST_CREDIT)) {
                     totalDeposits += txn.getAmount();
                 } else {
                     totalWithdrawals += txn.getAmount();
                 }
             }
             sb.append("────────────────────────────────────────\n");
-            sb.append(String.format("Total Deposits    : $%s\n", ValidationUtil.formatAmount(totalDeposits)));
-            sb.append(String.format("Total Withdrawals : $%s\n", ValidationUtil.formatAmount(totalWithdrawals)));
+            sb.append(String.format("Total Deposits    : %s %s\n", sym, ValidationUtil.formatAmount(totalDeposits)));
+            sb.append(String.format("Total Withdrawals : %s %s\n", sym, ValidationUtil.formatAmount(totalWithdrawals)));
             sb.append(String.format("Transaction Count : %d\n", filtered.size()));
         }
         return sb.toString();
@@ -456,3 +455,4 @@ public abstract class Account implements Transactable, InterestBearing, Reportab
         this.lastInterestDate = DateUtil.getCurrentDate();
     }
 }
+

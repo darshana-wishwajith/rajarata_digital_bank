@@ -5,6 +5,7 @@ import com.rajarata.bank.models.user.*;
 import com.rajarata.bank.utils.FileHandler;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Map;
  * OOP Concept: Observer Pattern - The notification service acts as the subject,
  * pushing notifications to subscribed users (observers) when events occur.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class NotificationService {
@@ -67,6 +68,12 @@ public class NotificationService {
      * Loads notifications from file and assigns to users.
      */
     public void loadNotifications() {
+        // Clear notifications from all users to avoid duplicates during reload
+        for (User user : authService.getAllUsersById().values()) {
+            if (user.getNotifications() != null) {
+                user.getNotifications().clear();
+            }
+        }
         List<String> lines = FileHandler.readAllLines(FileHandler.NOTIFICATIONS_FILE);
         int maxCounter = 0;
 
@@ -131,20 +138,36 @@ public class NotificationService {
     }
 
     /**
-     * Marks a notification as read by its list index.
+     * Saves all current notifications for all users back to the data file.
+     * This ensures 'read' status changes are persisted across application restarts.
+     */
+    private synchronized void saveAllNotifications() {
+        List<String> lines = new ArrayList<>();
+        // Iterate through all users to collect their notifications
+        for (User user : authService.getAllUsersById().values()) {
+            for (Notification n : user.getAllNotifications()) {
+                lines.add(n.toFileString());
+            }
+        }
+        FileHandler.writeAllLines(FileHandler.NOTIFICATIONS_FILE, lines);
+    }
+
+    /**
+     * Marks a notification as read by its unique ID.
      * @param userId User ID
-     * @param index 1-based index in notification list
+     * @param notifId Notification ID
      * @return true if marked successfully
      */
-    public boolean markAsReadByIndex(String userId, int index) {
+    public boolean markAsReadById(String userId, String notifId) {
         User user = authService.getUserById(userId);
         if (user == null) return false;
 
-        List<Notification> notifications = user.getAllNotifications();
-        int reverseIndex = notifications.size() - index;
-        if (reverseIndex >= 0 && reverseIndex < notifications.size()) {
-            notifications.get(reverseIndex).markAsRead();
-            return true;
+        for (Notification n : user.getAllNotifications()) {
+            if (n.getNotificationId().equals(notifId)) {
+                n.markAsRead();
+                saveAllNotifications();
+                return true;
+            }
         }
         return false;
     }
@@ -159,6 +182,8 @@ public class NotificationService {
             for (Notification n : user.getAllNotifications()) {
                 n.markAsRead();
             }
+            saveAllNotifications();
         }
     }
 }
+

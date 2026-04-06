@@ -6,7 +6,6 @@ import com.rajarata.bank.utils.ValidationUtil;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.*;
 
 /**
  * Registration screen with real-time field validation.
@@ -273,3 +272,4 @@ public class RegistrationScreen {
 
     public ScrollPane getRoot() { return root; }
 }
+

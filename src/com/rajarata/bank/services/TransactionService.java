@@ -4,49 +4,46 @@ import com.rajarata.bank.models.account.Account;
 import com.rajarata.bank.models.account.CheckingAccount;
 import com.rajarata.bank.models.transaction.*;
 import com.rajarata.bank.models.notification.AlertType;
-import com.rajarata.bank.models.notification.Notification;
-import com.rajarata.bank.models.user.Customer;
 import com.rajarata.bank.exceptions.*;
 import com.rajarata.bank.utils.*;
-import com.rajarata.bank.services.CurrencyService;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Service class for processing financial transactions.
- * Handles deposits, withdrawals, transfers, and transaction history.
+ * This service handles all money movements in the bank. 
+ * It manages deposits, withdrawals, and transfers between accounts.
  * 
- * OOP Concept: Polymorphism - Processes transactions uniformly through the
- * Account and Transactable interfaces, regardless of concrete account type.
- * The same processTransaction method works for all account subtypes.
+ * OOP Concepts applied:
+ * 1. Encapsulation - This class hides all transaction logic like validation, 
+ *    fee calculation, and audit logging.
+ * 2. Dependency Injection - It receives other required services through its 
+ *    constructor or setter methods.
+ * 3. Polymorphism - It works with abstract 'Account' objects to perform 
+ *    core banking actions.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class TransactionService {
 
-    /** Reference to account service */
     private final AccountService accountService;
-    /** Reference to authentication service */
-    private final AuthenticationService authService;
     /** Reference to notification service */
     private NotificationService notificationService;
     /** Reference to currency service for cross-currency transfers */
     private CurrencyService currencyService;
-    /** Daily transaction limit per account */
-    private static final double DAILY_TRANSACTION_LIMIT = 50000.0;
     /** Conversion fee rate for cross-currency transfers (0.5%) */
     private static final double CURRENCY_CONVERSION_FEE_RATE = 0.005;
 
+    private final FraudDetectionService fraudDetectionService;
+
     /**
-     * Constructor.
-     * @param accountService Reference to account service
-     * @param authService Reference to authentication service
+     * Constructor with dependencies.
      */
-    public TransactionService(AccountService accountService, AuthenticationService authService) {
+    public TransactionService(AccountService accountService, AuthenticationService authService,
+                              FraudDetectionService fraudDetectionService) {
         this.accountService = accountService;
-        this.authService = authService;
+        this.fraudDetectionService = fraudDetectionService;
     }
 
     /**
@@ -66,64 +63,71 @@ public class TransactionService {
     }
 
     /**
-     * Processes a deposit transaction.
+     * Deposits funds into an account.
+     * Performs validations and logs a success/failure transaction record.
      * 
-     * OOP Concept: Polymorphism - Calls account.deposit() which behaves
-     * differently based on the concrete account type.
-     * 
-     * @param accountNumber The account to deposit into
-     * @param amount The deposit amount
+     * @param accountNumber The account number
+     * @param amount The amount to deposit
      * @param description Transaction description
      * @return The completed Transaction object
      * @throws InvalidAccountException if account validation fails
-     * @throws InvalidInputException if amount validation fails
      */
     public Transaction deposit(String accountNumber, double amount, String description) 
-            throws InvalidAccountException, InvalidInputException {
+            throws InvalidAccountException {
+        Account account = accountService.getAccount(accountNumber);
+        Transaction txn = new Transaction(TransactionType.DEPOSIT, accountNumber, null, 
+                amount, account.getCurrency(), description != null ? description : "Cash deposit");
+        return processDeposit(account, txn, amount, true);
+    }
 
-        // Validate amount
-        if (!ValidationUtil.isValidDeposit(amount)) {
-            throw new InvalidInputException(
-                "Invalid deposit amount. Minimum is " + ValidationUtil.formatAmount(Account.MIN_DEPOSIT),
-                "amount");
+    /**
+     * Internal helper to process a deposit. Can be used by other services.
+     */
+    public Transaction processDeposit(Account account, Transaction txn, double amount, boolean notify) 
+            throws InvalidAccountException {
+        
+        if (amount <= 0) {
+            throw new InvalidAccountException("Deposit amount must be positive", account.getAccountNumber());
         }
 
-        Account account = accountService.getAccount(accountNumber);
-        Transaction txn = new Transaction(TransactionType.DEPOSIT, accountNumber, amount,
-                description != null ? description : "Cash deposit");
-
         try {
-            // OOP Concept: Polymorphism - deposit() may behave differently per account type
             account.deposit(amount);
             txn.complete(account.getBalance());
             account.addTransaction(txn);
 
-            // Save data
+            // Security check
+            if (fraudDetectionService != null) {
+                fraudDetectionService.checkTransaction(txn, account);
+            }
+
+            // Persistence
             accountService.saveAllAccounts();
             FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
-            FileHandler.logAudit("DEPOSIT",
-                    "Deposit $" + ValidationUtil.formatAmount(amount) + " to " + accountNumber);
+            FileHandler.logAudit(txn.getType().name(),
+                    "Amount: " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + 
+                    " | Account: " + account.getAccountNumber());
 
-            // Notifications — success notification and large-transaction check
-            sendNotification(account.getCustomerId(),
-                    AlertType.TRANSACTION_SUCCESS,
-                    "Deposit Successful",
-                    account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + " deposited to " +
-                    accountNumber + ". New balance: " + account.getCurrency() + " " + ValidationUtil.formatAmount(account.getBalance()));
-            checkLargeTransaction(account, amount);
+            // Notify user
+            if (notify) {
+                sendNotification(account.getCustomerId(),
+                        AlertType.TRANSACTION_SUCCESS,
+                        "Funds Deposited",
+                        account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + " deposited to " +
+                        account.getAccountNumber() + ". New balance: " + account.getCurrency() + " " + ValidationUtil.formatAmount(account.getBalance()));
+            }
 
         } catch (InvalidAccountException e) {
             txn.fail(e.getMessage());
-            FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
-            FileHandler.logAudit("DEPOSIT_FAILED",
-                    "Failed deposit to " + accountNumber + ": " + e.getMessage());
-
-            // Notification — failed transaction alert
-            sendNotification(account.getCustomerId(),
-                    AlertType.TRANSACTION_FAILED,
-                    "Deposit Failed",
-                    "Failed to deposit " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) +
-                    " to " + accountNumber + ". Reason: " + e.getMessage());
+            FileHandler.logAudit(txn.getType().name() + "_FAILED", 
+                    "Failed deposit to " + account.getAccountNumber() + ": " + e.getMessage());
+            
+            if (notify) {
+                sendNotification(account.getCustomerId(),
+                        AlertType.TRANSACTION_FAILED,
+                        "Deposit Failed",
+                        "Failed to deposit " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) +
+                        ". Reason: " + e.getMessage());
+            }
             throw e;
         }
 
@@ -142,67 +146,66 @@ public class TransactionService {
      */
     public Transaction withdraw(String accountNumber, double amount, String description) 
             throws InsufficientFundsException, InvalidAccountException {
+        Account account = accountService.getAccount(accountNumber);
+        Transaction txn = new Transaction(TransactionType.WITHDRAWAL, accountNumber, amount, 
+                account.getCurrency(), description != null ? description : "Cash withdrawal");
+        return processWithdrawal(account, txn, amount, true);
+    }
+
+    /**
+     * Internal helper to process a withdrawal. Can be used by other services.
+     */
+    public Transaction processWithdrawal(Account account, Transaction txn, double amount, boolean notify) 
+            throws InsufficientFundsException, InvalidAccountException {
 
         if (amount <= 0) {
-            throw new InvalidAccountException("Withdrawal amount must be positive", accountNumber);
+            throw new InvalidAccountException("Withdrawal amount must be positive", account.getAccountNumber());
         }
 
-        Account account = accountService.getAccount(accountNumber);
-        Transaction txn = new Transaction(TransactionType.WITHDRAWAL, accountNumber, amount,
-                description != null ? description : "Cash withdrawal");
-
         try {
-            // OOP Concept: Polymorphism - withdraw() has different behavior per account type
-            // SavingsAccount: checks withdrawal limit, no overdraft
-            // CheckingAccount: allows overdraft up to $1000
-            // StudentAccount: checks withdrawal limit, no overdraft
-            // FixedDepositAccount: applies early withdrawal penalty
             account.withdraw(amount);
             txn.complete(account.getBalance());
             account.addTransaction(txn);
 
-            accountService.saveAllAccounts();
-            FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
-            FileHandler.logAudit("WITHDRAWAL",
-                    "Withdrawal " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + " from " + accountNumber);
-
-            // Success notification
-            sendNotification(account.getCustomerId(),
-                    AlertType.TRANSACTION_SUCCESS,
-                    "Withdrawal Successful",
-                    account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + " withdrawn from " +
-                    accountNumber + ". New balance: " + account.getCurrency() + " " + ValidationUtil.formatAmount(account.getBalance()));
-
-            // Check for overdraft usage on CheckingAccount — audit log + alert
-            if (account instanceof CheckingAccount && account.getBalance() < 0) {
-                double overdraftUsed = Math.abs(account.getBalance());
-                FileHandler.logAudit("OVERDRAFT_USED",
-                        "Account " + accountNumber + " is now in overdraft. Amount: " +
-                        account.getCurrency() + " " + ValidationUtil.formatAmount(overdraftUsed));
-                sendNotification(account.getCustomerId(),
-                        AlertType.OVERDRAFT_ALERT,
-                        "Overdraft Facility Used",
-                        "Your checking account " + accountNumber + " is now in overdraft by " +
-                        account.getCurrency() + " " + ValidationUtil.formatAmount(overdraftUsed) +
-                        ". Overdraft interest (15% p.a.) will be charged.");
+            // Security check
+            if (fraudDetectionService != null) {
+                fraudDetectionService.checkTransaction(txn, account);
             }
 
-            // Check for low balance and large transaction alerts
+            accountService.saveAllAccounts();
+            FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
+            FileHandler.logAudit(txn.getType().name(),
+                    "Amount: " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + 
+                    " | Account: " + account.getAccountNumber());
+
+            // Success notification
+            if (notify) {
+                sendNotification(account.getCustomerId(),
+                        AlertType.TRANSACTION_SUCCESS,
+                        "Funds Withdrawn",
+                        account.getCurrency() + " " + ValidationUtil.formatAmount(amount) + " withdrawn from " +
+                        account.getAccountNumber() + ". New balance: " + account.getCurrency() + " " + ValidationUtil.formatAmount(account.getBalance()));
+            }
+
+            // Check for overdraft usage
+            checkOverdraftUsage(account);
+
+            // Other alerts
             checkLowBalance(account);
             checkLargeTransaction(account, amount);
 
         } catch (InsufficientFundsException | InvalidAccountException e) {
             txn.fail(e.getMessage());
-            FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, txn.toFileString());
-            FileHandler.logAudit("WITHDRAWAL_FAILED",
-                    "Failed withdrawal from " + accountNumber + ": " + e.getMessage());
+            FileHandler.logAudit(txn.getType().name() + "_FAILED",
+                    "Failed from " + account.getAccountNumber() + ": " + e.getMessage());
 
-            // Failure notification
-            sendNotification(account.getCustomerId(),
-                    AlertType.TRANSACTION_FAILED,
-                    "Withdrawal Failed",
-                    "Failed to withdraw " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) +
-                    " from " + accountNumber + ". Reason: " + e.getMessage());
+            if (notify) {
+                sendNotification(account.getCustomerId(),
+                        AlertType.TRANSACTION_FAILED,
+                        "Transaction Failed",
+                        "Failed to process " + account.getCurrency() + " " + ValidationUtil.formatAmount(amount) +
+                        ". Reason: " + e.getMessage());
+            }
             throw e;
         }
 
@@ -274,87 +277,107 @@ public class TransactionService {
         }
 
         try {
-            // Withdraw from source (in source currency)
+            // Withdrawal from source account (base currency)
             sourceAccount.withdraw(amount);
             sourceTxn.complete(sourceAccount.getBalance());
-            sourceAccount.addTransaction(sourceTxn);
-
-            // Deposit to destination (converted amount in dest currency)
-            destAccount.deposit(depositAmount);
-            destTxn.complete(destAccount.getBalance());
-            destAccount.addTransaction(destTxn);
-
-            // Save
-            accountService.saveAllAccounts();
-            FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, sourceTxn.toFileString());
-            FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, destTxn.toFileString());
-
-            // Build audit message
-            String auditMsg = "Transfer " + sourceCurrency + " " + ValidationUtil.formatAmount(amount) +
-                    " from " + sourceAccountNumber + " to " + destAccountNumber;
-            if (isCrossCurrency) {
-                auditMsg += " (converted to " + ValidationUtil.formatAmount(depositAmount) +
-                        " " + destCurrency + ", fee: " + ValidationUtil.formatAmount(conversionFee) +
-                        " " + destCurrency + ")";
+            
+            try {
+                // Deposit to destination account (converted if necessary)
+                destAccount.deposit(depositAmount);
+                destTxn.complete(destAccount.getBalance());
+                
+                // Add to history only after both operations succeed
+                sourceAccount.addTransaction(sourceTxn);
+                destAccount.addTransaction(destTxn);
+                
+                // Save both accounts and log transactions
+                accountService.saveAllAccounts();
+                FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, sourceTxn.toFileString());
+                FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, destTxn.toFileString());
+                
+                // Final audit and notifications
+                String auditMsg = "Transfer " + sourceCurrency + " " + ValidationUtil.formatAmount(amount) +
+                        " from " + sourceAccountNumber + " to " + destAccountNumber;
+                if (isCrossCurrency) {
+                    auditMsg += " (converted to " + ValidationUtil.formatAmount(depositAmount) +
+                            " " + destCurrency + ", fee: " + ValidationUtil.formatAmount(conversionFee) +
+                            " " + destCurrency + ")";
+                }
+                FileHandler.logAudit("TRANSFER", auditMsg);
+                
+                // Process notifications
+                sendTransferNotifications(sourceAccount, destAccount, amount, depositAmount, 
+                        sourceCurrency, destCurrency, isCrossCurrency, conversionFee);
+                
+                // Check overdraft and thresholds
+                checkOverdraftUsage(sourceAccount);
+                checkLowBalance(sourceAccount);
+                checkLargeTransaction(sourceAccount, amount);
+                
+            } catch (Exception e) {
+                // ROLLBACK: If deposit fails, refund the source account
+                FileHandler.logAudit("TRANSFER_ROLLBACK", 
+                    "Reversing withdrawal from " + sourceAccountNumber + " due to destination error: " + e.getMessage());
+                sourceAccount.deposit(amount); 
+                sourceTxn.fail("Transfer failed: " + e.getMessage());
+                throw e;
             }
-            FileHandler.logAudit("TRANSFER", auditMsg);
-
-            // Success notifications — notify both sender and receiver
-            String senderMsg = ValidationUtil.formatAmount(amount) + " " + sourceCurrency +
-                    " transferred from " + sourceAccountNumber + " to " + destAccountNumber;
-            if (isCrossCurrency) {
-                senderMsg += " (" + ValidationUtil.formatAmount(depositAmount) + " " + destCurrency +
-                        " received, fee: " + ValidationUtil.formatAmount(conversionFee) + " " + destCurrency + ")";
-            }
-            senderMsg += ". New balance: " + sourceCurrency + " " + ValidationUtil.formatAmount(sourceAccount.getBalance());
-            sendNotification(sourceAccount.getCustomerId(),
-                    AlertType.TRANSFER_SUCCESS, "Transfer Sent", senderMsg);
-
-            String receiverMsg = (isCrossCurrency
-                    ? ValidationUtil.formatAmount(depositAmount) + " " + destCurrency
-                    : ValidationUtil.formatAmount(amount) + " " + sourceCurrency)
-                    + " received from " + sourceAccountNumber +
-                    ". New balance: " + destCurrency + " " + ValidationUtil.formatAmount(destAccount.getBalance());
-            sendNotification(destAccount.getCustomerId(),
-                    AlertType.TRANSFER_SUCCESS, "Transfer Received", receiverMsg);
-
-            // Check overdraft on source if CheckingAccount
-            if (sourceAccount instanceof CheckingAccount && sourceAccount.getBalance() < 0) {
-                double overdraftUsed = Math.abs(sourceAccount.getBalance());
-                FileHandler.logAudit("OVERDRAFT_USED",
-                        "Account " + sourceAccountNumber + " is now in overdraft. Amount: " +
-                        sourceCurrency + " " + ValidationUtil.formatAmount(overdraftUsed));
-                sendNotification(sourceAccount.getCustomerId(),
-                        AlertType.OVERDRAFT_ALERT,
-                        "Overdraft Facility Used",
-                        "Your checking account " + sourceAccountNumber + " is now in overdraft by " +
-                        sourceCurrency + " " + ValidationUtil.formatAmount(overdraftUsed) +
-                        ". Overdraft interest (15% p.a.) will be charged.");
-            }
-
-            // Check alerts
-            checkLowBalance(sourceAccount);
-            checkLargeTransaction(sourceAccount, amount);
-
+            
         } catch (InsufficientFundsException | InvalidAccountException e) {
             sourceTxn.fail(e.getMessage());
-            destTxn.fail("Source transaction failed");
-            FileHandler.appendLine(FileHandler.TRANSACTIONS_FILE, sourceTxn.toFileString());
             FileHandler.logAudit("TRANSFER_FAILED",
                     "Failed transfer from " + sourceAccountNumber + ": " + e.getMessage());
-
-            // Failure notification
+            
+            // Failure notification to sender only
             sendNotification(sourceAccount.getCustomerId(),
                     AlertType.TRANSACTION_FAILED,
                     "Transfer Failed",
-                    "Failed to transfer " + sourceCurrency + " " + ValidationUtil.formatAmount(amount) +
-                    " from " + sourceAccountNumber + ". Reason: " + e.getMessage());
+                    "Transfer of " + sourceCurrency + " " + ValidationUtil.formatAmount(amount) +
+                    " failed. Reason: " + e.getMessage());
             throw e;
         }
 
         return sourceTxn;
     }
 
+    /**
+     * Helper to send notifications for successful transfers.
+     */
+    private void sendTransferNotifications(Account source, Account dest, double srcAmount, double destAmount,
+                                         String srcCur, String destCur, boolean crossCur, double fee) {
+        String senderMsg = ValidationUtil.formatAmount(srcAmount) + " " + srcCur +
+                " transferred to " + dest.getAccountNumber();
+        if (crossCur) {
+            senderMsg += " (" + ValidationUtil.formatAmount(destAmount) + " " + destCur +
+                    " received, fee: " + ValidationUtil.formatAmount(fee) + " " + destCur + ")";
+        }
+        senderMsg += ". New balance: " + srcCur + " " + ValidationUtil.formatAmount(source.getBalance());
+        sendNotification(source.getCustomerId(), AlertType.TRANSFER_SUCCESS, "Transfer Sent", senderMsg);
+
+        String receiverMsg = (crossCur ? ValidationUtil.formatAmount(destAmount) + " " + destCur
+                                      : ValidationUtil.formatAmount(srcAmount) + " " + srcCur)
+                + " received from " + source.getAccountNumber() +
+                ". New balance: " + destCur + " " + ValidationUtil.formatAmount(dest.getBalance());
+        sendNotification(dest.getCustomerId(), AlertType.TRANSFER_SUCCESS, "Transfer Received", receiverMsg);
+    }
+
+    /**
+     * Checks and logs overdraft usage.
+     */
+    private void checkOverdraftUsage(Account account) {
+        if (account instanceof CheckingAccount && account.getBalance() < 0) {
+            double overdraftUsed = Math.abs(account.getBalance());
+            FileHandler.logAudit("OVERDRAFT_USED",
+                    "Account " + account.getAccountNumber() + " is now in overdraft. Amount: " +
+                    account.getCurrency() + " " + ValidationUtil.formatAmount(overdraftUsed));
+            sendNotification(account.getCustomerId(),
+                    AlertType.OVERDRAFT_ALERT,
+                    "Overdraft Facility Used",
+                    "Your checking account " + account.getAccountNumber() + " is now in overdraft by " +
+                    account.getCurrency() + " " + ValidationUtil.formatAmount(overdraftUsed) +
+                    ". Interest will be charged.");
+        }
+    }
     /**
      * Gets the transaction history with pagination.
      * 
@@ -498,3 +521,4 @@ public class TransactionService {
         }
     }
 }
+

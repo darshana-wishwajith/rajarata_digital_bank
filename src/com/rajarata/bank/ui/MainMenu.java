@@ -4,8 +4,9 @@ import com.rajarata.bank.Bank;
 import com.rajarata.bank.models.user.*;
 import com.rajarata.bank.models.account.*;
 import com.rajarata.bank.models.transaction.*;
-import com.rajarata.bank.models.loan.*;
-import com.rajarata.bank.models.notification.AlertType;
+import com.rajarata.bank.models.loan.Loan;
+import com.rajarata.bank.models.loan.LoanType;
+import com.rajarata.bank.models.loan.LoanStatus;
 import com.rajarata.bank.services.*;
 import com.rajarata.bank.factory.AccountFactory;
 import com.rajarata.bank.exceptions.*;
@@ -21,7 +22,7 @@ import java.util.Map;
  * OOP Concept: Polymorphism - Uses User base type to determine which
  * dashboard to show, then processes account operations polymorphically.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class MainMenu {
@@ -393,7 +394,7 @@ public class MainMenu {
             Transaction txn = bank.getTransactionService().deposit(accNum, amount, desc);
             ConsoleUI.printSuccess("Deposit successful!");
             System.out.println(txn.getDetailedView());
-        } catch (InvalidAccountException | InvalidInputException e) {
+        } catch (InvalidAccountException e) {
             ConsoleUI.printError(e.getMessage());
         }
     }
@@ -543,8 +544,8 @@ public class MainMenu {
         String disbAccount = ConsoleUI.readString("Disbursement account number");
 
         // Show estimated rate
-        double rate = Loan.calculateInterestRate(customer.getCreditScore());
-        if (rate < 0) {
+        double rate = Loan.calculateInterestRate(loanType, customer.getCreditScore());
+        if (rate <= 0) {
             ConsoleUI.printError("Your credit score (" + customer.getCreditScore() + ") does not meet minimum requirements.");
             return;
         }
@@ -562,8 +563,9 @@ public class MainMenu {
                     purpose, employment, disbAccount);
             ConsoleUI.printSuccess("Loan application submitted! ID: " + loan.getLoanId());
             System.out.println("  Status: " + loan.getStatus().getDisplayName());
-            System.out.printf("  Monthly EMI: $%s\n", ValidationUtil.formatAmount(loan.getMonthlyInstallment()));
-        } catch (InvalidInputException e) {
+            String sym = CurrencyUtil.getCurrencySymbol(loan.getCurrency());
+            System.out.printf("  Monthly EMI: %s%s\n", sym, ValidationUtil.formatAmount(loan.getMonthlyInstallment()));
+        } catch (InvalidInputException | InvalidAccountException e) {
             ConsoleUI.printError(e.getMessage());
         }
     }
@@ -576,9 +578,9 @@ public class MainMenu {
             return;
         }
 
-        System.out.printf("  %-12s %-14s %14s %14s %-10s\n",
-                "Loan ID", "Type", "Amount ($)", "Remaining ($)", "Status");
-        System.out.println("  " + "─".repeat(70));
+        System.out.printf("  %-12s %-14s %20s %20s %-10s\n",
+                "Loan ID", "Type", "Amount", "Remaining", "Status");
+        System.out.println("  " + "─".repeat(85));
         for (Loan loan : loans) {
             System.out.println(loan.getLoanSummary());
         }
@@ -1253,3 +1255,4 @@ public class MainMenu {
         }
     }
 }
+

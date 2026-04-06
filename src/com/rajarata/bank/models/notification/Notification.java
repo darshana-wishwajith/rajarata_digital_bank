@@ -8,7 +8,7 @@ import com.rajarata.bank.utils.DateUtil;
  * 
  * OOP Concept: Encapsulation - All fields are private with controlled access.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class Notification {
@@ -137,3 +137,4 @@ public class Notification {
     /** @return Whether this notification has been read */
     public boolean isRead() { return read; }
 }
+

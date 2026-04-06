@@ -13,7 +13,7 @@ import com.rajarata.bank.exceptions.InvalidAccountException;
  * OOP Concept: Polymorphism - Returns Account base type, letting the system
  * work with accounts polymorphically regardless of their concrete type.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class AccountFactory {
@@ -163,3 +163,4 @@ public class AccountFactory {
         return sb.toString();
     }
 }
+

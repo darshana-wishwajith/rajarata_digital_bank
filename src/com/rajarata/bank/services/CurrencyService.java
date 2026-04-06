@@ -1,7 +1,5 @@
 package com.rajarata.bank.services;
 
-import com.rajarata.bank.models.account.Account;
-import com.rajarata.bank.models.transaction.*;
 import com.rajarata.bank.utils.*;
 
 import java.util.*;
@@ -10,7 +8,7 @@ import java.util.*;
  * Service for multi-currency operations and exchange rate management.
  * Supports USD, EUR, GBP, and LKR with configurable exchange rates.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class CurrencyService {
@@ -140,3 +138,4 @@ public class CurrencyService {
     /** @return Map of all exchange rates */
     public Map<String, Double> getAllRates() { return new TreeMap<>(exchangeRates); }
 }
+

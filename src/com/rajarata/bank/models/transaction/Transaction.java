@@ -14,7 +14,7 @@ import com.rajarata.bank.utils.ValidationUtil;
  * OOP Concept: Polymorphism (Method Overloading) - Multiple constructors accept
  * different parameter combinations for different transaction types.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class Transaction {
@@ -90,6 +90,19 @@ public class Transaction {
      */
     public Transaction(TransactionType type, String accountNumber, double amount, String description) {
         this(type, accountNumber, null, amount, "LKR", description);
+    }
+
+    /**
+     * Constructor for a transaction with explicit currency.
+     * 
+     * @param type Transaction type
+     * @param accountNumber Account number
+     * @param amount Amount
+     * @param currency Currency
+     * @param description Memo
+     */
+    public Transaction(TransactionType type, String accountNumber, double amount, String currency, String description) {
+        this(type, accountNumber, null, amount, currency, description);
     }
 
     /**
@@ -292,3 +305,4 @@ public class Transaction {
     /** @param balanceAfter The balance after to set */
     public void setBalanceAfter(double balanceAfter) { this.balanceAfter = balanceAfter; }
 }
+

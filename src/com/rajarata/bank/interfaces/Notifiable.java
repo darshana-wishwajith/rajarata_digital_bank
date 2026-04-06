@@ -10,7 +10,7 @@ import java.util.List;
  * OOP Concept: Abstraction + Observer Pattern - Defines the observer contract
  * for the notification system. Accounts and users can subscribe to notifications.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public interface Notifiable {
@@ -43,3 +43,4 @@ public interface Notifiable {
      */
     void markNotificationAsRead(String notificationId);
 }
+

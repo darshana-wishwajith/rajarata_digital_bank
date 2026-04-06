@@ -14,7 +14,7 @@ import com.rajarata.bank.utils.FileHandler;
  * OOP Concept: Aggregation - Bank aggregates all services, managing their
  * lifecycle and providing coordinated access.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class Bank {
@@ -47,19 +47,18 @@ public class Bank {
         // Initialize services in dependency order
         this.authService = new AuthenticationService();
         this.accountService = new AccountService(authService);
-        this.transactionService = new TransactionService(accountService, authService);
-        this.loanService = new LoanService(accountService, authService);
-        this.notificationService = new NotificationService(authService);
-        this.billPaymentService = new BillPaymentService(transactionService, accountService);
         this.currencyService = new CurrencyService();
         this.fraudDetectionService = new FraudDetectionService(accountService, currencyService);
+        this.transactionService = new TransactionService(accountService, authService, fraudDetectionService);
+        this.loanService = new LoanService(accountService, authService, transactionService);
+        this.notificationService = new NotificationService(authService);
+        this.billPaymentService = new BillPaymentService(transactionService, accountService);
         this.reportingService = new ReportingService(accountService, authService, loanService);
 
         // Wire notification service (avoids circular dependency)
         transactionService.setNotificationService(notificationService);
         transactionService.setCurrencyService(currencyService);
         loanService.setNotificationService(notificationService);
-        billPaymentService.setNotificationService(notificationService);
         fraudDetectionService.setNotificationService(notificationService);
 
         // Wire auth service to notification + fraud detection for login-lockout alerts
@@ -122,6 +121,20 @@ public class Bank {
     }
 
     /**
+     * Refreshes all data by reloading from files.
+     * Used for multi-instance synchronization or manual refresh.
+     */
+    public void refreshAllData() {
+        // Load in dependency order
+        authService.loadUsers();
+        accountService.loadAccounts();
+        loanService.loadLoans();
+        notificationService.loadNotifications();
+        billPaymentService.loadPayees();
+        fraudDetectionService.loadFraudCases();
+    }
+
+    /**
      * Shuts down the bank, saving all data.
      */
     public void shutdown() {
@@ -168,3 +181,4 @@ public class Bank {
     public FraudDetectionService getFraudDetectionService() { return fraudDetectionService; }
     public ReportingService getReportingService() { return reportingService; }
 }
+

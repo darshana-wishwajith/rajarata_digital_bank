@@ -10,21 +10,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Abstract base class representing a user of the Rajarata Digital Banking system.
- * Serves as the parent class for Customer, Staff, and Administrator.
+ * This is the main abstract class for all users in our bank system. 
+ * It holds common data like name, email, and password that every user needs.
  * 
- * OOP Concept: Abstraction - Defines common attributes and behaviors shared by
- * all user types, with abstract methods that subclasses must implement for
- * role-specific functionality.
+ * OOP Concepts applied:
+ * 1. Abstraction - This is an abstract class because we don't have a 'plain' user, 
+ *    just specific roles like Customer or Staff.
+ * 2. Encapsulation - All fields are private, and we use getters/setters to 
+ *    control how data is accessed.
+ * 3. Inheritance - This class is the base for Customer, Staff, and Admin classes.
  * 
- * OOP Concept: Inheritance - Customer, Staff, and Administrator extend this class,
- * inheriting common properties (userId, name, password) and overriding abstract
- * methods (getRole(), getDashboardMenu()).
- * 
- * OOP Concept: Encapsulation - All fields are private with controlled access
- * through getters/setters. Password is stored as a hash, never in plain text.
- * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public abstract class User implements Notifiable {
@@ -62,8 +58,6 @@ public abstract class User implements Notifiable {
     private String creationDate;
     /** Date of last successful login */
     private String lastLoginDate;
-    /** Whether the user is currently in an active session */
-    private boolean activeSession;
     /** List of notifications for this user */
     private List<Notification> notifications;
 
@@ -81,7 +75,6 @@ public abstract class User implements Notifiable {
         this.emailVerified = false;
         this.accountLocked = false;
         this.failedLoginAttempts = 0;
-        this.activeSession = false;
         this.creationDate = DateUtil.getCurrentDate();
     }
 
@@ -148,7 +141,6 @@ public abstract class User implements Notifiable {
         if (valid) {
             failedLoginAttempts = 0; // Reset on successful login
             lastLoginDate = DateUtil.getCurrentDateTime();
-            activeSession = true;
         } else {
             failedLoginAttempts++;
             if (failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
@@ -207,7 +199,7 @@ public abstract class User implements Notifiable {
      * Ends the user's active session (logout).
      */
     public void logout() {
-        this.activeSession = false;
+        // Clearing session state (could be expanded)
     }
 
     /**
@@ -416,11 +408,6 @@ public abstract class User implements Notifiable {
     public String getLastLoginDate() { return lastLoginDate; }
     /** @param lastLoginDate The last login date to set */
     public void setLastLoginDate(String lastLoginDate) { this.lastLoginDate = lastLoginDate; }
-
-    /** @return Whether the user has an active session */
-    public boolean isActiveSession() { return activeSession; }
-    /** @param activeSession The session status to set */
-    public void setActiveSession(boolean activeSession) { this.activeSession = activeSession; }
 
     /** @return The user's notifications list */
     public List<Notification> getNotifications() { return notifications; }

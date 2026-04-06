@@ -3,7 +3,6 @@ package com.rajarata.bank.ui.fx;
 import com.rajarata.bank.Bank;
 import com.rajarata.bank.models.user.*;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 /**
@@ -83,3 +82,4 @@ public class ScreenManager {
     /** Gets the primary Stage */
     public Stage getStage() { return stage; }
 }
+

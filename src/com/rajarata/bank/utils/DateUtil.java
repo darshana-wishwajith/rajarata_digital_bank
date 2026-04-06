@@ -15,7 +15,7 @@ import java.time.format.DateTimeParseException;
  * OOP Concept: Final Keyword - Uses final constants for date format patterns,
  * ensuring consistency across the application.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public final class DateUtil {
@@ -226,3 +226,4 @@ public final class DateUtil {
         return date.format(DATE_FORMATTER);
     }
 }
+

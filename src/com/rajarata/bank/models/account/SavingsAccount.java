@@ -1,6 +1,5 @@
 package com.rajarata.bank.models.account;
 
-import com.rajarata.bank.exceptions.InsufficientFundsException;
 import com.rajarata.bank.exceptions.InvalidAccountException;
 import com.rajarata.bank.utils.*;
 
@@ -17,7 +16,7 @@ import com.rajarata.bank.utils.*;
  * OOP Concept: Polymorphism - Overrides calculateInterest(), getAccountType(),
  * and other abstract methods with savings-specific implementations.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class SavingsAccount extends Account {
@@ -183,3 +182,4 @@ public class SavingsAccount extends Account {
         return "";
     }
 }
+

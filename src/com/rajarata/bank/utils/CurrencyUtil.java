@@ -3,7 +3,7 @@ package com.rajarata.bank.utils;
 /**
  * Utility class for currency-related operations and formatting.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public final class CurrencyUtil {
@@ -41,3 +41,4 @@ public final class CurrencyUtil {
         return getCurrencySymbol(currency) + " " + ValidationUtil.formatAmount(amount);
     }
 }
+

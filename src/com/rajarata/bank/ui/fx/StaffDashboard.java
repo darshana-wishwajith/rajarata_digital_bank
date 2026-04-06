@@ -1,12 +1,14 @@
 package com.rajarata.bank.ui.fx;
 
 import com.rajarata.bank.Bank;
-import com.rajarata.bank.models.user.*;
+import com.rajarata.bank.models.user.User;
+import com.rajarata.bank.models.user.Staff;
 import com.rajarata.bank.models.loan.*;
-import com.rajarata.bank.models.transaction.*;
-import com.rajarata.bank.exceptions.*;
 import com.rajarata.bank.utils.*;
 import javafx.collections.FXCollections;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.util.Duration;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -20,11 +22,13 @@ import java.util.Map;
 public class StaffDashboard {
 
     private final ScreenManager screenManager;
-    private final Staff staff;
+    private Staff staff;
     private final Bank bank;
     private final BorderPane root;
     private final StackPane contentArea;
     private VBox sidebarBtnContainer;
+    private int currentMenuIndex = 0;
+    private Timeline refreshTimer;
 
     public StaffDashboard(ScreenManager screenManager, Staff staff) {
         this.screenManager = screenManager;
@@ -33,6 +37,33 @@ public class StaffDashboard {
         this.contentArea = new StackPane();
         this.root = buildUI();
         showOverview();
+        startAutoRefresh();
+    }
+
+    private void startAutoRefresh() {
+        refreshTimer = new Timeline(new KeyFrame(Duration.minutes(5), e -> {
+            refreshNow();
+        }));
+        refreshTimer.setCycleCount(Timeline.INDEFINITE);
+        refreshTimer.play();
+    }
+
+    private void refreshNow() {
+        if (root.getScene() != null && root.getScene().getWindow() != null && root.getScene().getWindow().isShowing()) {
+            bank.refreshAllData();
+            // Refresh staff reference
+            User updated = bank.getAuthService().getUserById(this.staff.getUserId());
+            if (updated instanceof Staff) {
+                this.staff = (Staff) updated;
+                handleMenuClick(currentMenuIndex);
+            }
+        }
+    }
+
+    public void stopAutoRefresh() {
+        if (refreshTimer != null) {
+            refreshTimer.stop();
+        }
     }
 
     private BorderPane buildUI() {
@@ -49,13 +80,24 @@ public class StaffDashboard {
         sub.getStyleClass().add("sidebar-subtitle");
         header.getChildren().addAll(bankName, sub);
 
+        // User info & Refresh
+        VBox userInfoContainer = new VBox(10);
+        userInfoContainer.getStyleClass().add("sidebar-user-info");
+        
         VBox userInfo = new VBox(2);
-        userInfo.getStyleClass().add("sidebar-user-info");
         Label userName = new Label(staff.getFullName());
         userName.getStyleClass().add("sidebar-username");
         Label userRole = new Label("Staff • " + staff.getUserId());
         userRole.getStyleClass().add("sidebar-role");
         userInfo.getChildren().addAll(userName, userRole);
+        
+        Button manualRefreshBtn = new Button("🔄 Sync Now");
+        manualRefreshBtn.getStyleClass().add("btn-sidebar-refresh");
+        manualRefreshBtn.setMaxWidth(Double.MAX_VALUE);
+        manualRefreshBtn.setOnAction(e -> refreshNow());
+        
+        userInfoContainer.getChildren().addAll(userInfo, manualRefreshBtn);
+        userInfoContainer.setPadding(new Insets(10, 15, 10, 15));
 
         sidebarBtnContainer = new VBox();
         String[][] menuItems = {
@@ -77,13 +119,19 @@ public class StaffDashboard {
             sidebarBtnContainer.getChildren().add(btn);
         }
 
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
+        VBox scrollContent = new VBox();
+        scrollContent.getChildren().addAll(userInfoContainer, sidebarBtnContainer);
+        
+        ScrollPane sidebarScroll = new ScrollPane(scrollContent);
+        sidebarScroll.setFitToWidth(true);
+        sidebarScroll.getStyleClass().add("sidebar-scroll");
+        VBox.setVgrow(sidebarScroll, Priority.ALWAYS);
+
         Button logoutBtn = new Button("🚪  Logout");
         logoutBtn.getStyleClass().add("sidebar-logout-btn");
         logoutBtn.setOnAction(e -> screenManager.logout());
 
-        sidebar.getChildren().addAll(header, userInfo, sidebarBtnContainer, spacer, logoutBtn);
+        sidebar.getChildren().addAll(header, sidebarScroll, logoutBtn);
 
         ScrollPane scrollable = new ScrollPane(contentArea);
         scrollable.setFitToWidth(true);
@@ -103,6 +151,7 @@ public class StaffDashboard {
             btn.getStyleClass().removeAll("sidebar-btn-active");
             if (i == index) btn.getStyleClass().add("sidebar-btn-active");
         }
+        currentMenuIndex = index;
         switch (index) {
             case 0: showOverview(); break;
             case 1: showLoanApplications(); break;
@@ -231,7 +280,7 @@ public class StaffDashboard {
         title.getStyleClass().add("page-title");
 
         TableView<User> table = new TableView<>();
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
         TableColumn<User, String> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(cd.getValue().getUserId()));
@@ -243,7 +292,10 @@ public class StaffDashboard {
         statusCol.setCellValueFactory(cd -> new javafx.beans.property.SimpleStringProperty(
                 cd.getValue().isAccountLocked() ? "LOCKED" : "Active"));
 
-        table.getColumns().addAll(idCol, nameCol, emailCol, statusCol);
+        table.getColumns().add(idCol);
+        table.getColumns().add(nameCol);
+        table.getColumns().add(emailCol);
+        table.getColumns().add(statusCol);
 
         Map<String, User> users = bank.getAuthService().getAllUsersById();
         var customers = FXCollections.observableArrayList(
@@ -378,7 +430,16 @@ public class StaffDashboard {
             if (notifications == null || notifications.isEmpty()) {
                 page.getChildren().add(new Label("No notifications."));
             } else {
-                for (var n : notifications) {
+                Button markAllBtn = new Button("Mark All as Read");
+                markAllBtn.getStyleClass().add("btn-secondary");
+                markAllBtn.setOnAction(e -> {
+                    bank.getNotificationService().markAllAsRead(staff.getUserId());
+                    showNotifications();
+                });
+                page.getChildren().add(markAllBtn);
+
+                for (int i = notifications.size() - 1; i >= 0; i--) {
+                    var n = notifications.get(i);
                     HBox item = new HBox(12);
                     item.getStyleClass().add("card");
                     item.setAlignment(Pos.CENTER_LEFT);
@@ -391,7 +452,17 @@ public class StaffDashboard {
                     time.setStyle("-fx-text-fill: #B0B8C1; -fx-font-size: 11px;");
                     info.getChildren().addAll(msg, time);
                     HBox.setHgrow(info, Priority.ALWAYS);
+                    
+                    Button readBtn = new Button("Mark as Read");
+                    readBtn.getStyleClass().add("btn-outline-sm");
+                    final String nid = n.getNotificationId();
+                    readBtn.setOnAction(e -> {
+                        bank.getNotificationService().markAsReadById(staff.getUserId(), nid);
+                        showNotifications();
+                    });
+
                     item.getChildren().addAll(icon, info);
+                    if (!n.isRead()) item.getChildren().add(readBtn);
                     page.getChildren().add(item);
                 }
             }
@@ -442,3 +513,4 @@ public class StaffDashboard {
 
     public BorderPane getRoot() { return root; }
 }
+

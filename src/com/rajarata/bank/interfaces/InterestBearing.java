@@ -8,7 +8,7 @@ package com.rajarata.bank.interfaces;
  * its own interest calculation algorithm through this interface, allowing
  * the interest engine to process any account type polymorphically.
  * 
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public interface InterestBearing {
@@ -38,3 +38,4 @@ public interface InterestBearing {
      */
     void applyInterest();
 }
+

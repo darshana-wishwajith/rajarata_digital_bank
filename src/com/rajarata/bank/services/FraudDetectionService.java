@@ -5,14 +5,13 @@ import com.rajarata.bank.models.transaction.Transaction;
 import com.rajarata.bank.models.transaction.TransactionType;
 import com.rajarata.bank.models.account.Account;
 import com.rajarata.bank.utils.*;
-
 import java.util.*;
 
 
 /**
  * Service class for detecting and managing potential fraud cases.
  * Monitors transactions for suspicious patterns including:
- * - Large transaction amounts (>$10,000)
+ * - Large transaction amounts (>1,000,000 LKR)
  * - Rapid successive withdrawals (velocity check)
  * - Unusual transaction patterns (multiple withdrawals in short timeframe)
  * - Repeated failed login attempts (triggered by AuthenticationService)
@@ -20,14 +19,13 @@ import java.util.*;
  * OOP Concept: Encapsulation - All fraud detection logic is encapsulated here.
  * Other services interact through the public API for flagging and monitoring.
  *
- * @author Rajarata Digital Bank Development Team
+ * @author Rajarata University Student
  * @version 1.0
  */
 public class FraudDetectionService {
 
     private final Map<String, String[]> fraudCases;
     private NotificationService notificationService;
-    private final AccountService accountService;
     private final CurrencyService currencyService;
 
     /** Threshold for single-transaction fraud alert (LKR 1M ≈ $3000) */
@@ -49,7 +47,6 @@ public class FraudDetectionService {
 
     public FraudDetectionService(AccountService accountService, CurrencyService currencyService) {
         this.fraudCases = new HashMap<>();
-        this.accountService = accountService;
         this.currencyService = currencyService;
         this.recentWithdrawals = new HashMap<>();
     }
@@ -255,3 +252,4 @@ public class FraudDetectionService {
         caseCounter = maxCounter;
     }
 }
+

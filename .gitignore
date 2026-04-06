@@ -1,6 +1,6 @@
 # Exclude Compiled folders
 out/
-
+dist/
 # Exclude IDE settings (IntelliJ)
 .idea/
 *.iml

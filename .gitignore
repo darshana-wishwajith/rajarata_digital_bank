@@ -1,6 +1,10 @@
 # Exclude Compiled folders
 out/
 dist/
+
+#Exclude Data Folder
+data/
+
 # Exclude IDE settings (IntelliJ)
 .idea/
 *.iml

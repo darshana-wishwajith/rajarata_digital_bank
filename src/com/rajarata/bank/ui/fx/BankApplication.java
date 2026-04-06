@@ -2,8 +2,6 @@ package com.rajarata.bank.ui.fx;
 
 import com.rajarata.bank.Bank;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
